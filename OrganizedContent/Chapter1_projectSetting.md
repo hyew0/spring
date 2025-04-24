@@ -14,3 +14,9 @@
   - mockito: 목 라이브러리
   - assertj: 테스트 코드를 좀 더 편하게 작성하게 도와주는 라이브러리
   - spring-test: 스프링 통합 테스트 지원
+
+#스프링 튜토리얼
+https://spring.io/guides/gs/serving-web-content
+
+- GetMapping
+- PostMapping
