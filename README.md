@@ -2,8 +2,10 @@
 
 
 ### 단축키
-- ctrl + shift + t, command + shift + t : test 코드 바로 만들기 단축키
-- alt + enter, option + enter :  show context actions
+- ctrl + shift + t /(command + shift + t) t
+  - test 코드 바로 만들기 단축키
+- alt + enter /(option + enter)  
+  - show context actions
 
 ## 내용 정리
 
