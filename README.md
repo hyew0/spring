@@ -2,7 +2,7 @@
 
 
 ### 단축키
-- ctrl + shift + t /(command + shift + t) t
+- ctrl + shift + t /(command + shift + t)
   - test 코드 바로 만들기 단축키
 - alt + enter /(option + enter)  
   - show context actions
