@@ -72,7 +72,7 @@
 
 ### 5. 스프링 컨테이너와 스프링 빈
 
-- 스프링 컨테이너 생성
+#### 스프링 컨테이너 생성
     ```java
     ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
     ```
@@ -85,7 +85,7 @@
     - 이 클래스는 ApplicationContext 인터페이스의 구현체이다.
   - 스프링 컨테이너를 부를 때 BeanFactory , ApplicationContext 로 구분해서 이야기한다. 
     -  BeanFactory 를 직접 사용하는 경우는 거의 없으므로 일반적으로 ApplicationContext 를 스프링 컨테이너라 한다.
-- 스프링 컨테이너 생성 과정
+#### 스프링 컨테이너 생성 과정
   1. 스프링 컨테이너 생성 - AppConfig.class
      - 스프링 컨테이너를 생성할 때는 구성 정보를 지정해주어야 한다.
      - 여기서는 AppConfig를 구성 정보롤 지정했음.
@@ -98,24 +98,24 @@
     - 스프링 컨테이너는 설정 정보를 참고해서 의존관계를 주입(DI)한다.
   - 스프링은 빈을 생성하고, 의존관계를 주입하는 단계가 나뉘어져 있다. 그러나 자바 코드로 스프링 빈을 등록하면 생성자를 호출하면서 의존관계 주입도 한번에 처리된다.
 
-- 모든 빈 출력하기( ApplicationContextInfoTest )
+#### 모든 빈 출력하기( ApplicationContextInfoTest )
   - 실행하면 스프링에 등록된 모든 빈 정보를 출력할 수 있다.
   - ac.getBeanDefinitionNames() : 스프링에 등록된 모든 빈 이름을 조회한다.
   - ac.getBean() : 빈 이름으로 빈 객체(인스턴스)를 조회한다.
-- 애플리케이션 빈 출력하기
+#### 애플리케이션 빈 출력하기
   - 스프링이 내부에서 사용하는 빈은 제외하고, 내가 등록한 빈만 출력해보자.
   - 스프링이 내부에서 사용하는 빈은 getRole() 로 구분할 수 있다.
   - ROLE_APPLICATION : 일반적으로 사용자가 정의한 빈
   - ROLE_INFRASTRUCTURE : 스프링이 내부에서 사용하는 빈
 
-- 스프링 빈 조회
+#### 스프링 빈 조회
   - 스프링 컨테이너에서 스프링 빈을 찾는 가장 기본적인 조회 방법
     - ac.getBean(빈이름, 타입)
     - ac.getBean(타입)
     - 조회 대상 스프링 빈이 없으면 예외 발생
       - NoSuchBeanDefinitionException: No bean named 'xxxxx' available
 
-- 스프링 빈 조회 - 동일한 타입이 둘 이상일 경우
+#### 스프링 빈 조회 - 동일한 타입이 둘 이상일 경우
   - 타입을 조회할 때 같은 타입의 스프링 빈이 둘 이상이면 오류가 발생한다. 이때는 빈 이름을 지정하여 해결한다.
   - ac.getBeansOfType() 을 사용하면 해당 타입의 모든 빈을 조회할 수 있다.
 
