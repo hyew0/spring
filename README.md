@@ -15,13 +15,17 @@
 
 ## 내용 정리
 
-### 애자일 선언
+### 1. 애자일 선언
 - https://agilemanifesto.org/iso/ko/manifesto.html
 
-### AppConfig
+---
+
+### 2. AppConfig
 - 애플리케이션의 전체 동작 방식을 구성하기 위해, 구현 객체를 생성하고, 연결하는 책임을 가지는 별도의 설정 클래스
 
 ---
+### 3. IoC / DI / 컨테이너
+
 ### IoC
 - 제어의 역전(Inversion Of Control)
   - 프로그램의 제어 흐름을 직접 제어하는 것이 아니라 외부에서 관리하는 것을 의미한다.
@@ -41,7 +45,8 @@
 - 또는 어샘블러, 오브젝트 팩토리 등으로 불리기도 한다.
   - 조립을 한다고 해서 어셈블러, 오브젝트를 만들어 낸다고 해서 오브젝트 팩토리라고 부르기도 함.
 ---
-### 스프링 문법
+
+### 4. 스프링 문법
 - @Configuration
   - import org.springframework.context.annotation.Configuration;
   - 설정 정보를 담당한다는 의미, 설정을 구성한다는 뜻.
@@ -64,7 +69,9 @@
   - 코드가 약간 더 복잡해진 것 같은데, 스프링 컨테이너를 사용하면 어떤 장점이 있을까?
     - 개발 엔터프라이즈에서 개발해보면 스프링 컨테이너에서 관리함으로써 해줄 수 있는 기능이 어마어마하게 많다.
 ---
-### 스프링 컨테이너와 스프링 빈
+
+### 5. 스프링 컨테이너와 스프링 빈
+
 - 스프링 컨테이너 생성
     ```java
     ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
@@ -101,5 +108,10 @@
   - ROLE_APPLICATION : 일반적으로 사용자가 정의한 빈
   - ROLE_INFRASTRUCTURE : 스프링이 내부에서 사용하는 빈
 
-
+- 스프링 빈 조회
+  - 스프링 컨테이너에서 스프링 빈을 찾는 가장 기본적인 조회 방법
+    - ac.getBean(빈이름, 타입)
+    - ac.getBean(타입)
+    - 조회 대상 스프링 빈이 없으면 예외 발생
+      - NoSuchBeanDefinitionException: No bean named 'xxxxx' available
 ---
