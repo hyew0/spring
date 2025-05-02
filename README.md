@@ -73,9 +73,9 @@
 ### 5. 스프링 컨테이너와 스프링 빈
 
 #### 스프링 컨테이너 생성
-    ```java
-    ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
-    ```
+```java
+ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+```
   - ApplicationContext를 스프링 컨테이너이며 인터페이스이다.
   - 스프링 컨테이너는 XML을 기반으로 만들 수 있고, 애노테이션 기반의 자바 설정 클래스로 만들 수 있다.
     - 요즘에는 애노테이션 기반을 주로 사용.
