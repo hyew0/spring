@@ -114,4 +114,10 @@
     - ac.getBean(타입)
     - 조회 대상 스프링 빈이 없으면 예외 발생
       - NoSuchBeanDefinitionException: No bean named 'xxxxx' available
+
+- 스프링 빈 조회 - 동일한 타입이 둘 이상일 경우
+  - 타입을 조회할 때 같은 타입의 스프링 빈이 둘 이상이면 오류가 발생한다. 이때는 빈 이름을 지정하여 해결한다.
+  - ac.getBeansOfType() 을 사용하면 해당 타입의 모든 빈을 조회할 수 있다.
+
+
 ---
