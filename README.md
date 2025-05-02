@@ -119,5 +119,7 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
   - 타입을 조회할 때 같은 타입의 스프링 빈이 둘 이상이면 오류가 발생한다. 이때는 빈 이름을 지정하여 해결한다.
   - ac.getBeansOfType() 을 사용하면 해당 타입의 모든 빈을 조회할 수 있다.
 
-
+#### 스프링 빈 조회 - 상속관계
+- 부모 타입으로 조회하면 자식 타입도 함께 조회된다.
+- 모든 자바 객체의 최고 부모인 Object 타입으로 조회 시 모든 스프링 빈을 조회한다.
 ---
