@@ -150,5 +150,15 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
   - BeanFactory를 직접 사용할 일은 거의 없다. 부가기능이 포함된 ApplicationContext를 사용한다.
   - BeanFactory나 ApplicationContext를 스프링 컨테이너라 한다.
   
-
+#### 다양한 설정 형식 지원 - 자바 코드, XML
+- 스프링 컨테이너는 다양한 형식의 설정 정보를 받아들일 수 있게 유연하게 설계되어 있다.
+  - 자바 코드, XML, Groovy 등등
+- 애노테이션 기반 자바 코드 설정 사용
+  - 이전 커밋까지 사용했던 것이다.
+  - new AnnotationConfigApplicationContext(AppConfig.class)
+  - AnnotationConfigApplicationContext 클래스를 사용하면서 자바 코드로된 설정 정보를 넘기면 된다.
+- XML 설정 사용
+  - 최근에는 스프링 부트를 많이 사용하면서 XML기반의 설정은 잘 사용하지 않는다. 
+    - 아직 많은 레거시 프로젝트 들이 XML로 되어 있고, 또 XML을 사용하면 컴파일 없이 빈 설정 정보를 변경할 수 있는 장점도 있으므로 한번쯤 배워두는 것도 괜찮다.
+  - GenericXmlApplicationContext 를 사용하면서 xml 설정 파일을 넘기면 된다.
 ---
