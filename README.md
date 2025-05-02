@@ -9,6 +9,10 @@
 - ctrl + alt + m / (command + alt + m)
   - extract/introduce -> extract method via
 
+## Test 부분 개념
+
+- @DisplayName : junit에서 한글로 이름을 작성 가능하게 함.
+
 ## 내용 정리
 
 ### 애자일 선언
@@ -99,6 +103,3 @@
 
 
 ---
-## Test 부분 개념
-
-- @DisplayName : junit에서 한글로 이름을 작성 가능하게 함.
