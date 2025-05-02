@@ -1,7 +1,7 @@
 # spring basic
 
 
-### 단축키
+## 단축키
 - ctrl + shift + t /(command + shift + t)
   - test 코드 바로 만들기 단축키
 - alt + enter /(option + enter)  
@@ -16,7 +16,6 @@
 
 ### AppConfig
 - 애플리케이션의 전체 동작 방식을 구성하기 위해, 구현 객체를 생성하고, 연결하는 책임을 가지는 별도의 설정 클래스
-
 
 ---
 ### IoC
@@ -61,7 +60,45 @@
   - 코드가 약간 더 복잡해진 것 같은데, 스프링 컨테이너를 사용하면 어떤 장점이 있을까?
     - 개발 엔터프라이즈에서 개발해보면 스프링 컨테이너에서 관리함으로써 해줄 수 있는 기능이 어마어마하게 많다.
 ---
+### 스프링 컨테이너와 스프링 빈
+- 스프링 컨테이너 생성
+    ```java
+    ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+    ```
+  - ApplicationContext를 스프링 컨테이너이며 인터페이스이다.
+  - 스프링 컨테이너는 XML을 기반으로 만들 수 있고, 애노테이션 기반의 자바 설정 클래스로 만들 수 있다.
+    - 요즘에는 애노테이션 기반을 주로 사용.
+    - 에 AppConfig 를 사용했던 방식이 애노테이션 기반의 자바 설정 클래스로 스프링 컨테이너를 만든 것이다.
+  - 자바 설정 클래스를 기반으로 스프링 컨테이너( ApplicationContext )를 만들어보자.
+    - new AnnotationConfigApplicationContext(AppConfig.class);
+    - 이 클래스는 ApplicationContext 인터페이스의 구현체이다.
+  - 스프링 컨테이너를 부를 때 BeanFactory , ApplicationContext 로 구분해서 이야기한다. 
+    -  BeanFactory 를 직접 사용하는 경우는 거의 없으므로 일반적으로 ApplicationContext 를 스프링 컨테이너라 한다.
+- 스프링 컨테이너 생성 과정
+  1. 스프링 컨테이너 생성 - AppConfig.class
+     - 스프링 컨테이너를 생성할 때는 구성 정보를 지정해주어야 한다.
+     - 여기서는 AppConfig를 구성 정보롤 지정했음.
+  2. 스프링 빈 등록
+     - 스프링 컨테이너는 파라미터로 넘어온 설정 클래스 정보를 사용해서 스프링 빈을 등록한다.
+     - 빈 이름
+       - 빈 이름은 메서드 이름을 사용하고, 직접 지정할 수 도 있다.
+         - @Bean(name="memberService2")
+  3. 스프링 빈 의존관계 설정 
+    - 스프링 컨테이너는 설정 정보를 참고해서 의존관계를 주입(DI)한다.
+  - 스프링은 빈을 생성하고, 의존관계를 주입하는 단계가 나뉘어져 있다. 그러나 자바 코드로 스프링 빈을 등록하면 생성자를 호출하면서 의존관계 주입도 한번에 처리된다.
 
+- 모든 빈 출력하기( ApplicationContextInfoTest )
+  - 실행하면 스프링에 등록된 모든 빈 정보를 출력할 수 있다.
+  - ac.getBeanDefinitionNames() : 스프링에 등록된 모든 빈 이름을 조회한다.
+  - ac.getBean() : 빈 이름으로 빈 객체(인스턴스)를 조회한다.
+- 애플리케이션 빈 출력하기
+  - 스프링이 내부에서 사용하는 빈은 제외하고, 내가 등록한 빈만 출력해보자.
+  - 스프링이 내부에서 사용하는 빈은 getRole() 로 구분할 수 있다.
+  - ROLE_APPLICATION : 일반적으로 사용자가 정의한 빈
+  - ROLE_INFRASTRUCTURE : 스프링이 내부에서 사용하는 빈
+
+
+---
 ## Test 부분 개념
 
 - @DisplayName : junit에서 한글로 이름을 작성 가능하게 함.
