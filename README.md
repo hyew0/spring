@@ -192,3 +192,11 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
   - BeanDefinition에 대해서는 너무 깊이있게 이해하기 보다는, 스프링이 다양한 형태의 설정 정보를 BeanDefinition으로 추상화해서 사용하는 것 정도만 이해하면 된다.
   - 가끔 스프링 코드나 스프링 관련 오픈 소스의 코드를 볼 때, BeanDefinition 이라는 것이 보일 때가 있다. 이때 이러한 메커니즘을 떠올리면 된다.
 ---
+
+#### 싱글톤 컨테이너
+
+- 웹 애플리케이션과 싱글톤
+  - 웹 애플리케이션은 보통 여러 고객이 동시에 요청한다.
+    - 이전까지 스프링 없는 순수한 DI 컨테이너인 AppConfig는 요청할 때마다 객체를 새로 생성한다.
+    - 객체가 매번 새로 생성되면 메모리 낭비가 심해지기 때문에 "싱글톤 패턴"을 이용하여 해당 객체를 1개만 생성 후 공유하도록 설계한다.
+  - 
