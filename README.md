@@ -222,4 +222,4 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
     - 스프링 컨테이너의 이런 기능 덕분에 싱글톤 패턴의 모든 단점을 해결하면서 객체를 싱글톤으로 유지할 수 있다.
       - 싱글톤 패턴을 위한 지저분한 코드가 들어가지 않아도 된다.
       - DIP,OCP, 테스트, private 생성자로부터 자유롭게 싱글톤을 사용할 수 있다.
-      - 
+  - 참고) 스프링의 기본 빈 등록 방식은 싱글톤이지만, 요청할 때 마다 새로운 객체를 생성해서 반환하는 기능도 제공한다.
