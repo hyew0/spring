@@ -234,3 +234,28 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
     - 가급적 읽기만 가능해야 한다.
     - 필드 대신에 자바에서 공유되지 않는, 지역변수, 파라미터, ThreadLocal 등을 사용해야 한다.
   - 스프링 빈의 필드에 공유 값을 설정하면 정말 큰 장애가 발생할 수 있다!!!
+
+- @Configuration과 바이트코드 조작의 마법
+  - 스프링 컨테이너는 싱글톤 레지스트리다. 따라서 스프링 빈이 싱글톤이 되도록 보장해주어야 한다. 
+    - 그런데 스프링이 자바 코드까지 어떻게 하기는 어렵다. AppConfig 자바 코드를 보면 분명 3번 호출되어야 하는 것이 맞다.
+    - 그래서 스프링은 클래스의 바이트코드를 조작하는 라이브러리를 사용한다.
+    - AnnotationConfigApplicationContext 에 파라미터로 넘긴 값은 스프링 빈으로 등록된다. 그래서 AppConfig 도 스프링 빈이 된다.
+  - AppConfig 스프링 빈 조회
+    - bean = class hello.core.AppConfig$$SpringCGLIB$$0
+    - 순수한 클래스라면 ->  class hello.core.AppConfig 이렇게 나오는 것이 맞다.
+      - 스프링이 CGLIB라는 바이트코드 조작 라이브러리를 사용해서 AppConfig 클래스를 상속받은 임의의 다른 클래스를 만들어서 스프링 빈으로 등록했기 때문에 뒤에 저런 것이 붙는 것이다..
+    - 이렇게 만든 임의의 클래스가 싱글톤을 보장해주는 것이다.
+      - @Bean이 붙은 메서드마다 이미 스프링 빈이 존재하면 존재하는 빈을 반환하고, 스프링 빈이 없으면 생성해서 스프링 빈으로 등록하고 반환하는 코드가 동적으로 만들어진다.
+        - 덕분에 싱글톤이 보장되는 것이다.
+    - 참고)  AppConfig@CGLIB는 AppConfig의 자식 타입이므로, AppConfig 타입으로 조회 할 수 있다.
+  - @Configuration을 적용하지 않고, @Bean만 적용한다면?
+    - @Configuration 을 붙이면 바이트코드를 조작하는 CGLIB 기술을 사용해서 싱글톤을 보장하지만, 만약 @Bean만 적용하면 어떻게 될까?
+      - 순수한 클래스인 -> class hello.core.AppConfig 출력
+
+##### 정리
+
+- @Bean만 사용해도 스프링 빈으로 등록되지만, 싱글톤을 보장하지 않는다.
+- memberRepository() 처럼 의존관계 주입이 필요해서 메서드를 직접 호출할 때 싱글톤을 보장하지 않는다.
+- 스프링 설정 정보는 항상 @Configuration 을 붙여주도록 한다. (그냥 이렇게 알고 있으면 된다!)
+
+
