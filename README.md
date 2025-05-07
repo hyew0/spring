@@ -609,3 +609,14 @@ public class OrderServiceImpl implements OrderService {
 - 정리
   - 최근에는 생성자를 딱 1개 두고, @Autowired 를 생략하는 방법을 주로 사용한다. 
   - 여기에 Lombok 라이브러리의 @RequiredArgsConstructor 함께 사용하면 기능은 다 제공하면서, 코드는 깔끔하게 사용할 수 있다.
+
+##### 조회 빈이 2개 이상이 되면 발생하는 문제
+- @Autowired 는 타입(Type)으로 조회한다.
+
+- 타입으로 조회하기 때문에, 마치 다음 코드와 유사하게 동작한다. (실제로는 더 많은 기능을 제공한다.)
+  - ac.getBean(DiscountPolicy.class)
+  - 스프링 빈 조회에서 학습했듯이 타입으로 조회하면 선택된 빈이 2개 이상일 때 문제가 발생한다.
+    - NoUniqueBeanDefinitionException 오류가 발생한다.
+- 스프링 빈을 수동 등록해서 문제를 해결해도 되지만, 의존 관계 자동 주입에서 해결하는 여러 방법이 있다.
+
+
