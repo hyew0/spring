@@ -290,11 +290,11 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
 
 - 탐색 위치와 기본 스캔 대상
   - 탐색 위치는 시작 위치를 지정할 수 있다.
-```
-@ComponentScan(
-  basePackages = "hello.core",
-}
-```
+  ```
+  @ComponentScan(
+    basePackages = "hello.core",
+  }
+  ```
     - basePackages : 탐색할 패키지의 시작 위치를 지정한다. 이 패키지를 포함해서 하위 패키지를 모두 탐색한다.
     - 여러 시작 위치를 지정하는 것도 가능하다.
       - basePackages = {"hello.core", "hello.service"} 
