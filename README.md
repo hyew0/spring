@@ -8,6 +8,8 @@
   - show context actions
 - ctrl + alt + m / (command + alt + m)
   - extract/introduce -> extract method via
+- shift + shift 
+  - 검색창 열기
 
 ## Test 부분 개념
 
@@ -193,7 +195,7 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
   - 가끔 스프링 코드나 스프링 관련 오픈 소스의 코드를 볼 때, BeanDefinition 이라는 것이 보일 때가 있다. 이때 이러한 메커니즘을 떠올리면 된다.
 ---
 
-#### 싱글톤 컨테이너
+###  6. 싱글톤 컨테이너
 
 - 웹 애플리케이션과 싱글톤
   - 웹 애플리케이션은 보통 여러 고객이 동시에 요청한다.
@@ -258,4 +260,31 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
 - memberRepository() 처럼 의존관계 주입이 필요해서 메서드를 직접 호출할 때 싱글톤을 보장하지 않는다.
 - 스프링 설정 정보는 항상 @Configuration 을 붙여주도록 한다. (그냥 이렇게 알고 있으면 된다!)
 
+---
+
+### 7. 컴포넌트 스캔
+
+- 컴포넌트 스캔은 설정 정보가 없어도 자동으로 스프링 빈을 등록하는 기능이다.
+- 의존관계도 자동으로 주입하는 @Autowired 라는 기능도 제공한다.
+
+- 현재 코드 참고(AutoAppConfig.java)
+  - 참고) 컴포넌트 스캔을 사용하면 @Configuration 이 붙은 설정 정보도 자동으로 등록되기 때문에, AppConfig, TestConfig 등 앞서 만들어두었던 설정 정보도 함께 등록되고, 실행되어 버린다. 
+    - 그래서 excludeFilters 를 이용해서 설정정보는 컴포넌트 스캔 대상에서 제외했다. 
+    - 보통 설정 정보를 컴포넌트 스캔 대상에서 제외하지는 않지만, 기존 예제 코드를 최대한 남기고 유지하기 위해서 이 방법을 선택했다
+
+- 컴포넌트 스캔은 @Component 애노테이션이 붙은 클래스를 스캔해서 스프링 빈으로 등록한다.
+- 참고) @Configuration 이 컴포넌트 스캔의 대상이 된 이유도 @Configuration 소스코드를 열어보면 @Component 애노테이션이 붙어있기 때문이다.
+
+##### 컴포넌트 스캔과 자동 의존관계 주입 동작 과정
+1. @ComponentScan
+- @ComponentScan 은 @Component 가 붙은 모든 클래스를 스프링 빈으로 등록한다.
+  - 이때 스프링 빈의 기본 이름은 클래스명을 사용하되 맨 앞글자만 소문자를 사용한다.
+    - 빈 이름 기본 전략: MemberServiceImpl 클래스 memberServiceImpl
+    - 빈 이름 직접 지정: 만약 스프링 빈의 이름을 직접 지정하고 싶으면
+      - @Component("memberService2") 이런식으로 이름을 부여하면 된다.
+2. @Autowired 의존관계 자동 주입
+- 생성자에 @Autowired 를 지정하면, 스프링 컨테이너가 자동으로 해당 스프링 빈을 찾아서 주입한다.
+- 이때 기본 조회 전략은 타입이 같은 빈을 찾아서 주입한다.
+  - getBean(MemberRepository.class) 와 동일하다고 이해하면 된다.
+- 생성자에 파라미터가 많아도 알아서 찾아서 자동으로 주입한다.
 
