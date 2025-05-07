@@ -553,3 +553,59 @@ public class OrderServiceImpl implements OrderService {
   - 항상 생성자 주입을 선택해라. 그리고 가끔 옵션이 필요하면 수정자 주입을 선택해라. 
     - 필드 주입은 사용하지 않는 게 좋다.
 
+##### 롬복과 최신 트렌드
+
+- 막상 개발을 해보면 대부분 불변, 필드에 final 키워드를 사용한다. 그런데 생성자 만들고, 대입 코드 만들고 등등 반복되는 작업을 해야한다.
+  - 편리하게 사용하기 위해 Lombok을 사용한다!
+  - 롬복 라이브러리가 제공하는 @RequiredArgsConstructor 기능을 사용하면 final이 붙은 필드를 모아서 생성자를 자동으로 만들어준다. (다음 코드에는 보이지 않지만 실제 호출 가능하다.)
+
+- 롬복 설치법
+  - settings -> plugins -> lombok 검색해서 설치
+  - settings -> annotation processing 체크
+  - 다음과 같이 lombok 설정 부분을 build.gradle에 넣어주기 (아래는 예시로 본인의 gradle 에 설정 부분을 넣어주면됨.)
+    - 프로젝트 생성 시 롬복을 선택할 수 도 있음. (지금 프로젝트는 선택 안했기 때문에 직접 넣어줌.)
+      ```java
+      plugins {
+      id 'org.springframework.boot' version '2.3.2.RELEASE'
+      id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+      id 'java'
+      }
+    
+      group = 'hello'
+      version = '0.0.1-SNAPSHOT'
+      sourceCompatibility = '11'
+    
+      //lombok 설정 추가 시작
+      configurations {
+        compileOnly {
+          extendsFrom annotationProcessor
+        }
+      }
+      //lombok 설정 추가 끝
+    
+      repositories {
+        mavenCentral()
+      }
+      dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+              
+        //lombok 라이브러리 추가 시작
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        //lombok 라이브러리 추가 끝
+      
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+          exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+      }
+      test {
+        useJUnitPlatform()
+      }
+      ```
+  - 임의의 테스트 클래스를 만들고 @Getter, @Setter 확인
+
+- 정리
+  - 최근에는 생성자를 딱 1개 두고, @Autowired 를 생략하는 방법을 주로 사용한다. 
+  - 여기에 Lombok 라이브러리의 @RequiredArgsConstructor 함께 사용하면 기능은 다 제공하면서, 코드는 깔끔하게 사용할 수 있다.
