@@ -324,3 +324,8 @@ ApplicationContext applicationContext = new AnnotationConfigApplicationContext(A
         - @Service 는 특별한 처리를 하지 않는다. 대신 개발자들이 핵심 비즈니스 로직이 여기에 있겠구나 라고 비즈니스 계층을 인식하는데 도움이 된다.
     - 참고) 
       - useDefaultFilters 옵션은 기본으로 켜져있는데, 이 옵션을 끄면 기본 스캔 대상들이 제외된다. 그냥 이런 옵션이 있구나 정도 알면 됨.
+
+- 필터
+  - includeFilters : 컴포넌트 스캔 대상을 추가로 지정한다.
+  - excludeFilters : 컴포넌트 스캔에서 제외할 대상을 지정한다.
+  - 
