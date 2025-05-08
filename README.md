@@ -815,3 +815,37 @@ public class OrderServiceImpl implements OrderService {
 - 정리
   - @PostConstruct, @PreDestroy 애노테이션을 사용하자
   - 코드를 고칠 수 없는 외부 라이브러리를 초기화, 종료해야 하면 @Bean 의 initMethod , destroyMethod 를 사용하자.
+
+---
+### 10. 빈 스코프
+
+- 빈 스코프란?
+  - 스코프는 빈이 존재할 수 있는 범위를 뜻한다.
+- 스프링에는 다양한 스코프를 지원.
+  - 싱글톤
+    - 기본 스코프, 스프링 컨테이너의 시작과 종료까지 유지되는 가장 넓은 범위의 스코프다.
+  - 프로토타입
+    - 스프링 컨테이너는 프로토타입 빈의 생성과 의존관계 주입까지만 관여하고 더는 관리하지 않는 매우 짧은 범위의 스코프이다.
+  - 웹 관련 스코프
+    - request
+      - 웹 요청이 들어오고 나갈때 까지 유지되는 스코프이다.
+    - session
+      - 웹 세션이 생성되고 종료될 때 까지 유지되는 스코프이다.
+    - application
+      - 웹의 서블릿 컨텍스트와 같은 범위로 유지되는 스코프이다
+  - 사용 방법
+    - 컴포넌트 스캔 자동 등록 
+      ```java
+      @Scope("prototype")
+      @Component
+      public class HelloBean {} 
+      ```
+    - 수동 등록
+      ```java
+      @Scope("prototype")
+      @Bean
+      PrototypeBean HelloBean() {
+          return new HelloBean();
+      }
+      ```
+      
