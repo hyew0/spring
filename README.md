@@ -774,4 +774,13 @@ public class OrderServiceImpl implements OrderService {
   - 설정 정보에 초기화 메서드, 종료 메서드 지정
   - @PostConstruct, @PreDestroy 애노테이션 지원
 
+#### 인터페이스 InitializingBean, DisposableBean
+- InitializingBean 은 afterPropertiesSet() 메서드로 초기화를 지원한다.
+- DisposableBean 은 destroy() 메서드로 소멸을 지원한다
 
+- 초기화, 소멸 인터페이스 단점
+  - 스프링 전용 인터페이스로 lifeCycle 폴더에 속한 코드들은 스프링 전용 인터페이스를 의존한다.
+  - 초기화, 소멸 메서드의 이름을 변경할 수 없다.
+  - 코드를 고칠 수 없는 외부 라이브러리에 적용할 수 없다.
+  - 참고 )
+    - 인터페이스를 사용하는 초기화, 종료 방법은 스프링 초창기에 나온 방법들이고, 지금은 다음의 더 나은 방법들이 있어서 거의 사용하지 않는다.
