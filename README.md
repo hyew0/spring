@@ -961,3 +961,23 @@ public class OrderServiceImpl implements OrderService {
     - 만약(정말 그럴일은 거의 없겠지만) 코드를 스프링이 아닌 다른 컨테이너에서도 사용할 수 있어야 한다면 JSR-330 Provider를 사용해야한다.
   - 스프링을 사용하다 보면 이 기능 뿐만 아니라 다른 기능들도 자바 표준과 스프링이 제공하는 기능이 겹칠때가 많이 있다. 
     - 대부분 스프링이 더 다양하고 편리한 기능을 제공해주기 때문에, 특별히 다른 컨테이너를 사용할 일이 없다면, 스프링이 제공하는 기능을 사용하면 된다.
+
+#### 웹 스코프
+
+-  스코프의 특징
+  - 웹 스코프는 웹 환경에서만 동작한다.
+  - 웹 스코프는 프로토타입과 다르게 스프링이 해당 스코프의 종료시점까지 관리한다. 따라서 종료 메서드가 호출된다.
+
+- 웹 스코프 종류
+  - request: 
+    - HTTP 요청 하나가 들어오고 나갈 때 까지 유지되는 스코프, 각각의 HTTP 요청마다 별도의 빈 인스턴스가 생성되고, 관리된다.
+  - session: 
+    - HTTP Session과 동일한 생명주기를 가지는 스코프
+  - application: 
+    - 서블릿 컨텍스트( ServletContext )와 동일한 생명주기를 가지는 스코프 websocket: 웹 소켓과 동일한 생명주기를 가지는 스코프
+
+- build.gradle에 추가
+  - //web 라이브러리 추가
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+---
