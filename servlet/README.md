@@ -21,7 +21,7 @@
     - protected void service(HttpServletRequest request, HttpServletResponse response)
 
 ### HTTP 요청 메시지 로그로 확인하기
-- 다음 설정을 추가하자.
+- 다음 설정을 추가. resource -> application.properties
   - application.properties
     ```properties
         logging.level.org.apache.coyote.http11=debug
