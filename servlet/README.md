@@ -159,3 +159,12 @@
     - request.getParameter() 는 하나의 파라미터 이름에 대해서 단 하나의 값만 있을 때 사용해야 한다. 
     - 지금처럼 중복일 때는 request.getParameterValues() 를 사용해야 한다.
     - 참고로 이렇게 중복일 때 request.getParameter() 를 사용하면 request.getParameterValues() 의 첫번째 값을 반환한다.
+
+#### POST HTML Form
+- 특징
+  - content-type: application/x-www-form-urlencoded
+  - 메시지 바디에 쿼리 파리미터 형식으로 데이터를 전달한다. username=hello&age=20
+- application/x-www-form-urlencoded 형식은 앞서 GET에서 살펴본 쿼리 파라미터 형식과 같다. 
+  - 따라서 쿼리 파라미터 조회 메서드를 그대로 사용하면 된다.
+  - 클라이언트(웹 브라우저) 입장에서는 두 방식에 차이가 있지만, 서버 입장에서는 둘의 형식이 동일하므로, request.getParameter() 로 편리하게 구분없이 조회할 수 있다.
+- request.getParameter() 는 GET URL 쿼리 파라미터 형식도 지원하고, POST HTML Form 형식도 둘 다 지원한다.
