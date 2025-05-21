@@ -192,3 +192,26 @@
   - 참고
     - HTML form 데이터도 메시지 바디를 통해 전송되므로 직접 읽을 수 있다. 
     - 하지만 편리한 파리미터 조회 기능( request.getParameter(...) )을 이미 제공하기 때문에 파라미터 조회 기능을 사용하면 된다.
+
+### HttpServletResponse
+
+- HttpServletResponse 역할
+  - HTTP 응답 메시지 생성
+    - HTTP 응답코드 지정
+    - 헤더 생성
+    - 바디 생성
+  - 편의 기능 제공
+    - Content-Type, 쿠키, Redirect
+
+#### HTTP 응답 데이터 - 단순 텍스트, HTML
+
+- HTTP 응답 메시지는 주로 다음 내용을 담아서 전달한다.
+  - 단순 텍스트 응답
+    - 앞에서 살펴봄 ( writer.println("ok"); )
+  - HTML 응답
+  - HTTP API - MessageBody JSON 응답
+- HTTP 응답으로 HTML을 반환할 때는 content-type을 text/html 로 지정해야 한다
+
+#### HTTP 응답 데이터 - API JSON
+- HTTP 응답으로 JSON을 반환할 때는 content-type을 application/json 로 지정해야 한다.
+- Jackson 라이브러리가 제공하는 objectMapper.writeValueAsString() 를 사용하면 객체를 JSON 문자로 변경할 수 있다.
