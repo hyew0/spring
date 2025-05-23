@@ -264,3 +264,47 @@
 - 뷰: 
   - 모델에 담겨있는 데이터를 사용해서 화면을 그리는 일에 집중한다. 
   - 여기서는 HTML을 생성하는 부분을 말한다.
+
+## mvc 패턴 적용 예제
+
+- 서블릿을 컨트롤러로 사용하고, JSP를 뷰로 사용해서 MVC 패턴을 적용해보자.
+  - Model은 HttpServletRequest 객체를 사용한다. request는 내부에 데이터 저장소를 가지고 있는데,
+  - request.setAttribute() , request.getAttribute() 를 사용하면 데이터를 보관하고, 조회할 수 있다.
+
+- dispatcher.forward() : 다른 서블릿이나 JSP로 이동할 수 있는 기능이다. 서버 내부에서 다시 호출이 발생한다
+
+- /WEB-INF
+  - 이 경로안에 JSP가 있으면 외부에서 직접 JSP를 호출할 수 없다. 
+  - 우리가 기대하는 것은 항상 컨트롤러를 통해서 JSP를 호출하는 것이다.
+
+- redirect vs forward
+  - 리다이렉트는 실제 클라이언트(웹 브라우저)에 응답이 나갔다가, 클라이언트가 redirect 경로로 다시 요청한다.
+    - 따라서 클라이언트가 인지할 수 있고, URL 경로도 실제로 변경된다. 
+  - 반면에 포워드는 서버 내부에서 일어나는 호출이기 때문에 클라이언트가 전혀 인지하지 못한다.
+
+- HttpServletRequest를 Model로 사용한다.
+  - request가 제공하는 setAttribute() 를 사용하면 request 객체에 데이터를 보관해서 뷰에 전달할 수 있다.
+  - 뷰는 request.getAttribute() 를 사용해서 데이터를 꺼내면 된다.
+
+- <%= request.getAttribute("member")%> 로 모델에 저장한 member 객체를 꺼낼 수 있지만, 너무 복잡해진다.
+  - JSP는 ${} 문법을 제공하는데, 이 문법을 사용하면 request의 attribute에 담긴 데이터를 편리하게 조회할 수 있다.
+  ```html
+    <ul>
+      <li>id=${member.id}</li>
+      <li>username=${member.username}</li>
+      <li>age=${member.age}</li>
+    </ul>
+  ```
+  
+- 모델에 담아둔 members를 JSP가 제공하는 taglib기능을 사용해서 반복하면서 출력했다.
+  - members 리스트에서 member 를 순서대로 꺼내서 item 변수에 담고, 출력하는 과정을 반복한다.
+  - <c:forEach> 이 기능을 사용하려면 다음과 같이 선언해야 한다.
+    - <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+    
+## MVC 패턴 - 한계
+
+- 공통 처리가 어렵다는 문제가 있다.
+  - ->  이 문제를 해결하려면 컨트롤러 호출 전에 먼저 공통 기능을 처리해야 한다. 
+  - 소위 수문장 역할을 하는 기능이 필요하다.
+    - 프론트 컨트롤러(Front Controller) 패턴을 도입하면 이런 문제를 깔끔하게 해결할 수 있다.(입구를 하나로!)
+    - 스프링 MVC의 핵심도 바로 이 프론트 컨트롤러에 있다.
