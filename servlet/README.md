@@ -86,12 +86,12 @@
           accept-encoding: gzip, deflate, br, zstd
           accept-language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
     - 3. Header 편리한 조회
-      1. Host 편의 조회
+      - Host 편의 조회
          - request.getServerName() 
            - localhost
          - request.getServerPort() 
            - 8080
-      2. Accept-Language 편의 조회
+      - Accept-Language 편의 조회
          - request.getLocales().asIterator()
            .forEachRemaining(locale -> System.out.println("locale = " + locale));
            - locale = ko_KR
@@ -100,13 +100,13 @@
              locale = en
          - System.out.println("request.getLocale() = " + request.getLocale());
            - request.getLocale() = ko_KR
-      3. cookie 편의 조회
+      - cookie 편의 조회
          - if (request.getCookies() != null) {
              for (Cookie cookie : request.getCookies()) {
                System.out.println(cookie.getName() + ": " + cookie.getValue());
              }
            }
-      4. Content 편의 조회
+      - Content 편의 조회
          - request.getContentType() 
            - null 
          - request.getContentLength() 
@@ -225,3 +225,27 @@
   - 이것이 바로 템플릿 엔진이 나온 이유이다. 
   - 템플릿 엔진을 사용하면 HTML 문서에서 필요한 곳만 코드를 적용해서 동적으로 변경할 수 있다.
   - 템플릿 엔진에는 JSP, Thymeleaf, Freemarker, Velocity등이 있다.
+
+# jsp로 회원관리 
+
+- JSP는 자바 코드를 그대로 다 사용할 수 있다.
+  - <%@ page import="hello.servlet.domain.member.MemberRepository" %>
+    - 자바의 import 문과 같다.
+  - <% ~~ %>
+    - 이 부분에는 자바 코드를 입력할 수 있다.
+  - <%= ~~ %>
+    - 이 부분에는 자바 코드를 출력할 수 있다.
+
+## 서블릿과 JSP의 한계와 MVC 패턴의 등장
+
+- 서블릿
+  - html 코드와 자바 코드가 섞여서 지저분하고 복잡했음.
+- jsp 도입
+  - JSP를 사용한 덕분에 뷰를 생성하는 HTML 작업을 깔끔하게 가져가고, 중간중간 동적으로 변경이 필요한 부분에만 자바 코드를 적용
+  - jsp 한계
+    - 회원 저장 JSP를 보면 코드의 상위 절반은 회원을 저장하기 위한 비즈니스 로직이고, 나머지 하위 절반만 결과를 HTML로 보여주기 위한 뷰 영역이다. 회원 목록의 경우에도 마찬가지.
+    - JAVA 코드, 데이터를 조회하는 리포지토리 등등 다양한 코드가 모두 JSP에 노출되어 있다. JSP가 너무 많은 역할을 한다. 
+      - 이렇게 작은 프로젝트도 벌써 머리가 아파오는데, 수백 수천줄이 넘어가는 JSP를 떠올려보면 유지보수 측면에서 나쁜 코드이다.
+- MVC 패턴 등장
+  - 비즈니스 로직은 서블릿 처럼 다른곳에서 처리하고, JSP는 목적에 맞게 HTML로 화면(View)을 그리는 일에 집중하도록 하기 위해 과거 개발자들도 모두 비슷한 고민이 했었고, 그래서 MVC 패턴이 등장했다.
+
