@@ -24,7 +24,7 @@ public class MemberSaveControllerV1 implements ControllerV1 {
 
         request.setAttribute("member", member);
 
-        String viewPath = "WEB-INF/views/save-result.jsp";
+        String viewPath = "/WEB-INF/views/save-result.jsp";
         RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
         dispatcher.forward(request,response);
     }
