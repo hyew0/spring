@@ -351,3 +351,146 @@
     - 어댑터를 추가해서 프레임워크를 유연하고 확장성 있게 설계
 
 - -> 지금까지 작성한 코드는 스프링 MVC 프레임워크의 핵심 코드의 축약 버전이고, 구조도 거의 같다.
+
+---
+# 스프링 MVC 기능 이해
+
+- 직접 만든 프레임워크 ->  스프링 MVC 비교
+  - FrontController -> DispatcherServlet
+  - handlerMappingMap -> HandlerMapping
+  - MyHandlerAdapter -> HandlerAdapter
+  - ModelView -> ModelAndView
+  - viewResolver -> ViewResolver
+  - MyView -> View 
+
+- 스프링 MVC도 프론트 컨트롤러 패턴으로 구현되어 있음.
+  - 스프링 MVC의 프론트 컨트롤러가 DispatcherServlet이다.
+  - DispatcherServlet 서블릿 등록
+    - DispatcherServlet 도 부모 클래스에서 HttpServlet 을 상속 받아서 사용하고, 서블릿으로 동작한다.
+      - DispatcherServlet FrameworkServlet HttpServletBean HttpServlet
+    - 스프링 부트는 DispatcherServlet 을 서블릿으로 자동으로 등록하면서 모든 경로( urlPatterns="/" )에 대해서 매핑한다.
+      - 참고: 더 자세한 경로가 우선순위가 높다. 그래서 기존에 등록한 서블릿도 함께 동작한다.
+
+- 동작 순서
+  - 핸들러 조회: 핸들러 매핑을 통해 요청 URL에 매핑된 핸들러(컨트롤러)를 조회한다.
+  - 핸들러 어댑터 조회: 핸들러를 실행할 수 있는 핸들러 어댑터를 조회한다.
+  - 핸들러 어댑터 실행: 핸들러 어댑터를 실행한다.
+  - 핸들러 실행: 핸들러 어댑터가 실제 핸들러를 실행한다.
+  - ModelAndView 반환: 핸들러 어댑터는 핸들러가 반환하는 정보를 ModelAndView로 변환해서 반환한다.
+  - viewResolver 호출: 뷰 리졸버를 찾고 실행한다.
+    - JSP의 경우: InternalResourceViewResolver 가 자동 등록되고, 사용된다.
+  - View 반환: 뷰 리졸버는 뷰의 논리 이름을 물리 이름으로 바꾸고, 렌더링 역할을 담당하는 뷰 객체를 반환한다.
+    - JSP의 경우 InternalResourceView(JstlView) 를 반환하는데, 내부에 forward() 로직이 있다.
+  - 뷰 렌더링: 뷰를 통해서 뷰를 렌더링 한다
+
+- 주요 인터페이스 목록
+  - 핸들러 매핑: org.springframework.web.servlet.HandlerMapping
+  - 핸들러 어댑터: org.springframework.web.servlet.HandlerAdapter
+  - 뷰 리졸버: org.springframework.web.servlet.ViewResolver
+  - 뷰: org.springframework.web.servlet.View
+
+- 스프링 부트가 자동 등록하는 핸들러 매핑과 핸들러 어댑터 (실제로는 더 많지만, 중요한 부분 위주로 설명하기 위해 일부 생략)
+  - HandlerMapping
+  ```
+  0 = RequestMappingHandlerMapping : 애노테이션 기반의 컨트롤러인 @RequestMapping에서 사용
+  1 = BeanNameUrlHandlerMapping : 스프링 빈의 이름으로 핸들러를 찾는다. ```
+  ```
+
+  - HandlerAdapter
+  ```
+  0 = RequestMappingHandlerAdapter : 애노테이션 기반의 컨트롤러인 @RequestMapping에서 사용
+  1 = HttpRequestHandlerAdapter : HttpRequestHandler 처리
+  2 = SimpleControllerHandlerAdapter : Controller 인터페이스(애노테이션X, 과거에 사용) 처리
+  ```
+
+- viewResolver
+  - 뷰 리졸버 - InternalResourceViewResolver
+  - 스프링 부트는 InternalResourceViewResolver 라는 뷰 리졸버를 자동으로 등록하는데, 이때 application.properties 에 등록한 spring.mvc.view.prefix , spring.mvc.view.suffix 설정 정보를 사용해서 등록한다.
+    ```properties
+    spring.mvc.view.prefix=/WEB-INF/views/
+    spring.mvc.view.suffix=.jsp 
+    ```
+    
+  - 스프링 부트가 자동 등록하는 뷰 리졸버(실제로는 더 많지만, 중요한 부분 위주로 설명하기 위해 일부 생략)  
+  ```
+    1 = BeanNameViewResolver : 빈 이름으로 뷰를 찾아서 반환한다. (예: 엑셀 파일 생성 기능에 사용)
+    2 = InternalResourceViewResolver : JSP를 처리할 수 있는 뷰를 반환한다
+  ```
+- 순서
+  -  핸들러 어댑터 호출
+     - 핸들러 어댑터를 통해 new-form 이라는 논리 뷰 이름을 획득한다.
+  - ViewResolver 호출
+    - new-form 이라는 뷰 이름으로 viewResolver를 순서대로 호출한다. 
+    - BeanNameViewResolver 는 new-form 이라는 이름의 스프링 빈으로 등록된 뷰를 찾아야 하는데 없다. 
+    - InternalResourceViewResolver 가 호출된다.
+  - InternalResourceViewResolver
+     - 이 뷰 리졸버는 InternalResourceView 를 반환한다. 
+  - 뷰 - InternalResourceView
+    - InternalResourceView 는 JSP처럼 포워드 forward() 를 호출해서 처리할 수 있는 경우에 사용한다.
+  - view.render()
+    - view.render() 가 호출되고 InternalResourceView 는 forward() 를 사용해서 JSP를 실행한다
+
+  - 참고
+    - InternalResourceViewResolver 는 만약 JSTL 라이브러리가 있으면 InternalResourceView 를 상속받은 JstlView 를 반환한다. 
+      - JstlView 는 JSTL 태그 사용시 약간의 부가 기능이 추가된다.
+    - 다른 뷰는 실제 뷰를 렌더링하지만, JSP의 경우 forward() 통해서 해당 JSP로 이동(실행)해야 렌더링이 된다. 
+      - JSP를 제외한 나머지 뷰 템플릿들은 forward() 과정 없이 바로 렌더링 된다.
+    - Thymeleaf 뷰 템플릿을 사용하면 ThymeleafViewResolver 를 등록해야 한다. 
+      - 최근에는 라이브러리만 추가하면 스프링 부트가 이런 작업도 모두 자동화해준다.
+
+## 스프링 MVC 시작하기
+
+- @RequestMapping
+  - 스프링은 애노테이션을 활용한 매우 유연하고 실용적인 컨트롤러를 만들었다.
+    - 그게 바로 @RequestMapping 이다.
+  - @RequestMapping
+    - RequestMappingHandlerMapping
+    - RequestMappingHandlerAdapter
+    - -> 가장 우선순위가 높은 핸들러 매핑과 핸들러 어댑터이다. 
+    - 스프링에서 주로 사용하는 애노테이션 기반의 컨트롤러를 지원하는 핸들러 매핑과 어댑터이다. 실무에서도 이것을 거의 대부분 사용한다. (99.9%)
+
+- @Controller
+  - 스프링이 자동으로 스프링 빈으로 등록한다.
+    - 내부에 @Component 애노테이션이 있어서 컴포넌트 스캔의 대상이 됨
+- @RequestMapping
+  - 요청 정보를 매핑한다. 해당 URL이 호출되면 이 메서드가 호출된다.
+  - 애노테이션을 기반으로 동작하기 때문에, 메서드의 이름은 임의로 지으면 된다.
+- ModelAndView
+  - 모델과 뷰 정보를 담아서 반환하면 된다.
+
+- RequestMappingHandlerMapping 은 스프링 빈 중에서 @RequestMapping 또는 @Controller 가 클래스 레벨에 붙어 있는 경우에 매핑 정보로 인식한다.
+
+- 주의!! - 스프링 3.0 이상
+  - 스프링 부트 3.0(스프링 프레임워크 6.0)부터는 클래스 레벨에 @RequestMapping 이 있어도 스프링 컨트롤러로 인식하지 않는다. 
+  - 오직 @Controller 가 있어야 스프링 컨트롤러로 인식한다. 
+  - 참고로 @RestController 는 해당 애노테이션 내부에 @Controller 를 포함하고 있으므로 인식 된다. 
+    - 따라서 @Controller 가 없는 위의 두 코드는 스프링 컨트롤러로 인식되지 않는다. 
+      - ( RequestMappingHandlerMapping 에서 @RequestMapping 는 이제 인식하지 않고, Controller 만 인식한다.)
+
+# 스프링 MVC - 컨트롤러 통합 (springMVC v2)
+
+- @RequestMapping 을 잘 보면 클래스 단위가 아니라 메서드 단위에 적용된 것을 확인할 수 있다. 따라서 컨트롤러 클래스를 유연하게 하나로 통합할 수 있다.
+
+- 클래스 레벨 @RequestMapping("/springmvc/v2/members")
+  - 메서드 레벨 @RequestMapping("/new-form") -> /springmvc/v2/members/new-form
+  - 메서드 레벨 @RequestMapping("/save") -> /springmvc/v2/members/save
+  - 메서드 레벨 @RequestMapping ->  /springmvc/v2/members
+
+# 스프링 MVC - 실용적인 방식 (springMVC v3)
+
+- Model 파라미터
+  - save() , members() 를 보면 Model을 파라미터로 받는 것을 확인할 수 있다. 스프링 MVC도 이런 편의 기능을 제공한다.
+- ViewName 직접 반환
+  - 뷰의 논리 이름을 반환할 수 있다.
+- @RequestParam 사용
+  - 스프링은 HTTP 요청 파라미터를 @RequestParam 으로 받을 수 있다.
+  - @RequestParam("username") 은 request.getParameter("username") 와 거의 같은 코드라 생각하면 된다.
+  - 물론 GET 쿼리 파라미터, POST Form 방식을 모두 지원한다.
+- @RequestMapping ->  @GetMapping, @PostMapping
+  - @RequestMapping 은 URL만 매칭하는 것이 아니라, HTTP Method도 함께 구분할 수 있다.
+  - 예를 들어서 URL이 /new-form 이고, HTTP Method가 GET인 경우를 모두 만족하는 매핑을 하려면 다음과 같이 처리하면 된다.
+  ```
+    @RequestMapping(value = "/new-form", method = RequestMethod.GET) 
+  ```
+  - 이것을 @GetMapping , @PostMapping 으로 더 편리하게 사용할 수 있다.
+  - 참고로 Get, Post, Put, Delete, Patch 모두 애노테이션이 준비되어 있다.
