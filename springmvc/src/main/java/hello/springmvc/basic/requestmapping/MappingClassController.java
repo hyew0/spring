@@ -14,28 +14,39 @@ public class MappingClassController {
      * 회원 삭제: DELETE /users/{userId}
     */
 
+    /**
+     * GET /mapping/users
+     */
     @GetMapping
-    public String user() {
+    public String users() {
         return "get users";
     }
-
+    /**
+     * POST /mapping/users
+     */
     @PostMapping
-    public String addUSer() {
+    public String addUser() {
         return "post user";
     }
-
+    /**
+     * GET /mapping/users/{userId}
+     */
     @GetMapping("/{userId}")
-    public  String findUser(@PathVariable String userId) {
-        return "get userId=" +userId;
+    public String findUser(@PathVariable String userId) {
+        return "get userId=" + userId;
     }
-
+    /**
+     * PATCH /mapping/users/{userId}
+     */
     @PatchMapping("/{userId}")
-    public  String updateUser(@PathVariable String userId) {
-        return "update userId=" +userId;
+    public String updateUser(@PathVariable String userId) {
+        return "update userId=" + userId;
     }
-
+    /**
+     * DELETE /mapping/users/{userId}
+     */
     @DeleteMapping("/{userId}")
-    public  String deleteUser(@PathVariable String userId) {
-        return "delete userId=" +userId;
+    public String deleteUser(@PathVariable String userId) {
+        return "delete userId=" + userId;
     }
 }
