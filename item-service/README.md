@@ -67,3 +67,8 @@
   - th:href="@{|/basic/items/${item.id}|}"
   - 상품 이름을 선택하는 링크를 확인해보자.
   - 리터럴 대체 문법을 활용해서 간단히 사용할 수도 있다.
+
+- 속성 변경 - th:value
+  - th:value="${item.id}"
+    - 모델에 있는 item 정보를 획득하고 프로퍼티 접근법으로 출력한다. ( item.getId() )
+    - value 속성을 th:value 속성으로 변경한다.
