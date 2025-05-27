@@ -106,3 +106,51 @@
     - 예) @ModelAttribute 클래스명 모델에 자동 추가되는 이름
       - Item -> item
       - HelloWorld -> helloWorld
+
+- 리다이렉트
+  - 상품 수정은 마지막에 뷰 템플릿을 호출하는 대신에 상품 상세 화면으로 이동하도록 리다이렉트를 호출한다.
+  - 스프링은 redirect:/... 으로 편리하게 리다이렉트를 지원한다.
+  - redirect:/basic/items/{itemId}
+    - 컨트롤러에 매핑된 @PathVariable 의 값은 redirect 에도 사용 할 수 있다.
+    - redirect:/basic/items/{itemId} {itemId} 는 @PathVariable Long itemId 의 값을 그대로 사용한다.
+
+- 참고
+  - HTML Form 전송은 PUT, PATCH를 지원하지 않는다. GET, POST만 사용할 수 있다.
+  - PUT, PATCH는 HTTP API 전송시에 사용
+  - 스프링에서 HTTP POST로 Form 요청할 때 히든 필드를 통해서 PUT, PATCH 매핑을 사용하는 방법이 있지만, HTTP 요청상 POST 요청이다.
+
+# PRG Post/Redirect/Get 
+
+- 지금까지 진행한 상품 등록 처리 컨트롤러는 심각한 문제가 있다. (addItemV1 ~ addItemV4)
+  - 상품 등록을 완료하고 웹 브라우저의 새로고침 버튼을 클릭해보면 상품이 계속해서 중복 등록되는 것을 확인할 수 있다.
+
+- 웹 브라우저의 새로 고침은 마지막에 서버에 전송한 데이터를 다시 전송한다.
+  - 상품 등록 폼에서 데이터를 입력하고 저장을 선택하면 POST /add + 상품 데이터를 서버로 전송한다.
+  - 이 상태에서 새로 고침을 또 선택하면 마지막에 전송한 POST /add + 상품 데이터를 서버로 다시 전송하게 된다.
+  - 그래서 내용은 같고, ID만 다른 상품 데이터가 계속 쌓이게 된다.
+
+- 웹 브라우저의 새로 고침은 마지막에 서버에 전송한 데이터를 다시 전송한다.
+  - 새로 고침 문제를 해결하려면 상품 저장 후에 뷰 템플릿으로 이동하는 것이 아니라, 상품 상세 화면으로 리다이렉트를 호출해주면 된다.
+  - 웹 브라우저는 리다이렉트의 영향으로 상품 저장 후에 실제 상품 상세 화면으로 다시 이동한다. 
+  - 따라서 마지막에 호출한 내용이 상품 상세 화면인 GET /items/{id} 가 되는 것이다.
+  - 이후 새로고침을 해도 상품 상세 화면으로 이동하게 되므로 새로 고침 문제를 해결할 수 있다.
+
+- 주의
+  - "redirect:/basic/items/" + item.getId() redirect에서 +item.getId() 처럼 URL에 변수를 더해서 사용하는 것은 URL 인코딩이 안되기 때문에 위험하다. 
+  - 다음에 설명하는 RedirectAttributes 를 사용하자.
+
+# RedirectAttributes
+
+- RedirectAttributes 를 사용하면 URL 인코딩도 해주고, pathVariable , 쿼리 파라미터까지 처리해준다.
+  - redirect:/basic/items/{itemId}
+  - pathVariable 바인딩: {itemId}
+  - 나머지는 쿼리 파라미터로 처리: ?status=true
+
+- resources/templates/basic/item.html
+```
+<h2 th:if="${param.status}" th:text="'저장 완료!'"></h2> 
+``` 
+- th:if : 해당 조건이 참이면 실행
+  - ${param.status} : 타임리프에서 쿼리 파라미터를 편리하게 조회하는 기능
+  - 원래는 컨트롤러에서 모델에 직접 담고 값을 꺼내야 한다. 
+    - 그런데 쿼리 파라미터는 자주 사용해서 타임리프에서 직접 지원한다.
