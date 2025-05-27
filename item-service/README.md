@@ -72,3 +72,37 @@
   - th:value="${item.id}"
     - 모델에 있는 item 정보를 획득하고 프로퍼티 접근법으로 출력한다. ( item.getId() )
     - value 속성을 th:value 속성으로 변경한다.
+
+## 상품 등록 
+
+- 속성 변경 - th:action
+  - th:action
+  - HTML form에서 action 에 값이 없으면 현재 URL에 데이터를 전송한다.
+  - 상품 등록 폼의 URL과 실제 상품 등록을 처리하는 URL을 똑같이 맞추고 HTTP 메서드로 두 기능을 구분한다.
+    - 상품 등록 폼: GET /basic/items/add
+    - 상품 등록 처리: POST /basic/items/add
+  - 이렇게 하면 하나의 URL로 등록 폼과, 등록 처리를 깔끔하게 처리할 수 있다.
+  
+  - 취소
+    - 취소시 상품 목록으로 이동한다.
+    - th:onclick="|location.href='@{/basic/items}'|
+
+## 상품 등록 처리 - @ModelAttribute
+
+- 상품 등록 폼은 다음 방식으로 서버에 데이터를 전달한다.
+  - POST - HTML Form
+    - content-type: application/x-www-form-urlencoded
+    - 메시지 바디에 쿼리 파리미터 형식으로 전달 itemName=itemA&price=10000&quantity=10
+    - 예) 회원 가입, 상품 주문, HTML Form 사용
+
+- @ModelAttribute - 요청 파라미터 처리
+  - @ModelAttribute 는 Item 객체를 생성하고, 요청 파라미터의 값을 프로퍼티 접근법(setXxx)으로 입력해준다.
+- @ModelAttribute - Model 추가
+  - @ModelAttribute 는 중요한 한가지 기능이 더 있는데, 바로 모델(Model)에 @ModelAttribute 로 지정한 객체를 자동으로 넣어준다. 
+  - 지금 코드를 보면 model.addAttribute("item", item) 가 주석처리 되어 있어도 잘 동작하는 것을 확인할 수 있다
+
+- 주의
+  - @ModelAttribute 의 이름을 생략하면 모델에 저장될 때 클래스명을 사용한다. 이때 클래스의 첫글자만 소문자로 변경해서 등록한다.
+    - 예) @ModelAttribute 클래스명 모델에 자동 추가되는 이름
+      - Item -> item
+      - HelloWorld -> helloWorld
