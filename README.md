@@ -12,4 +12,4 @@
 
 # springMVC2 - 스프링 MVC 활용편
 - 스프링 mvc
-- 4_springMVC1 branch
+- 4_springMVC2 branch
