@@ -245,3 +245,26 @@
   - 타임리프의 th:checked 는 값이 false 인 경우 checked 속성 자체를 제거한다.
   -   <input type="checkbox" name="active" th:checked="false" />
     -  -> 타임리프 렌더링 후: <input type="checkbox" name="active" />
+
+#### 반복
+- 타임리프에서 반복은 th:each를 사용한다.
+
+- 반복 기능
+  - <tr th:each="user : ${users}">
+  - 반복시 오른쪽 컬렉션( ${users} )의 값을 하나씩 꺼내서 왼쪽 변수( user )에 담아서 태그를 반복 실행한다.
+  - th:each 는 List 뿐만 아니라 배열, java.util.Iterable , java.util.Enumeration 을 구현한 모든 객체를 반복에 사용할 수 있다. 
+  - Map 도 사용할 수 있는데 이 경우 변수에 담기는 값은 Map.Entry 이다.
+
+- 반복 상태 유지
+  - <tr th:each="user, userStat : ${users}">
+  - 반복의 두번째 파라미터를 설정해서 반복의 상태를 확인 할 수 있다.
+  - 두번째 파라미터는 생략 가능한데, 생략하면 지정한 변수명( user ) + Stat 가 된다.
+  - 여기서는 user + Stat = userStat 이므로 생략 가능하다.
+
+- 반복 상태 유지 기능
+  - index : 0부터 시작하는 값
+  - count : 1부터 시작하는 값
+  - size : 전체 사이즈
+  - even , odd : 홀수, 짝수 여부( boolean )
+  - first , last :처음, 마지막 여부( boolean )
+  - current : 현재 객체
