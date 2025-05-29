@@ -72,3 +72,20 @@
     - 느린 배송
     - 셀렉트 박스로 하나만 선택할 수 있다.
 
+# 체크 박스
+- 체크 박스를 체크하면 HTML Form에서 open=on 이라는 값이 넘어간다. 
+  - 스프링은 on 이라는 문자를 true 타입으로 변환해준다.
+- 주의 - 체크 박스를 선택하지 않을 때
+  - HTML에서 체크 박스를 선택하지 않고 폼을 전송하면 open 이라는 필드 자체가 서버로 전송되지 않는다.
+
+- HTTP 요청 메시지 로깅
+  - HTTP 요청 메시지를 서버에서 보고 싶으면 다음 설정을 추가하면 된다.
+  - application.properties
+  ```
+  logging.level.org.apache.coyote.http11=trace
+  ```
+
+- HTML checkbox는 선택이 안되면 값 자체를 보내지 않기 때문에 문제가 될 수 있다.
+  - 스프링 MVC는 히든 필드 _open을 만들어서 기존이름에 언더스코어를 붙여서 전송하면 체크를 해제했다고 인식한다.
+    - 체크를 해제한 경우 여기에서 open은 전송되지 않고, _open만 전송되어 -> 스프링 MVC는 체크를 해제했다고 판단한다.
+      - <input type="hidden" name="_open" value="on"/>
