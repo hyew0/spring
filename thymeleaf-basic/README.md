@@ -222,3 +222,26 @@
  - No-Operation: _ 인 경우 마치 타임리프가 실행되지 않는 것 처럼 동작한다. 
    - 이것을 잘 사용하면 HTML의 내용 그대로 활용할 수 있다. 
    - 마지막 예를 보면 데이터가 없습니다. 부분이 그대로 출력된다.
+
+#### 속성 값 설정
+- 타임리프 태그 속성(Attribute)
+  - 타임리프는 주로 HTML 태그에 th:* 속성을 지정하는 방식으로 동작한다. th:* 로 속성을 적용하면 기존 속성을 대체한다. 
+  - 기존 속성이 없으면 새로 만든다.
+
+- 속성 설정
+  - th:* 속성을 지정하면 타임리프는 기존 속성을 th:* 로 지정한 속성으로 대체한다. 기존 속성이 없다면 새로 만든다.
+    - <input type="text" name="mock" th:name="userA" />
+    - -> 타임리프 렌더링 후 <input type="text" name="userA" />
+
+- 속성 추가
+  - th:attrappend : 속성 값의 뒤에 값을 추가한다.
+  - th:attrprepend : 속성 값의 앞에 값을 추가한다.
+  - th:classappend : class 속성에 자연스럽게 추가한다.
+
+- checked 처리
+  - HTML에서는 <input type="checkbox" name="active" checked="false" /> 이 경우에도 checked 속성이 있기 때문에 checked 처리가 되어버린다.
+  - HTML에서 checked 속성은 checked 속성의 값과 상관없이 checked 라는 속성만 있어도 체크가 된다. 
+  - 이런 부분이 true , false 값을 주로 사용하는 개발자 입장에서는 불편하다.
+  - 타임리프의 th:checked 는 값이 false 인 경우 checked 속성 자체를 제거한다.
+  -   <input type="checkbox" name="active" th:checked="false" />
+    -  -> 타임리프 렌더링 후: <input type="checkbox" name="active" />
