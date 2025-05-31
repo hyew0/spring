@@ -10,6 +10,9 @@
 
 - form
   - 스프링 통합 학습
-
+ 
 - message
   - 메시지, 국제화 학습
+
+- validation
+  - 검증1 학습
