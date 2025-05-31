@@ -183,7 +183,7 @@
       예) 오류 코드: required, object name: item
       1.: required.item
       2.: required
-    ```
+      ```
   - 필드 오류
     - 필드 오류의 경우 다음 순서로 4가지 메시지 코드 생성
     - ```java
@@ -197,7 +197,7 @@
       2. "typeMismatch.age"
       3. "typeMismatch.int"
       4. "typeMismatch"
-    ```
+      ```
 - 동작 방식
   - rejectValue() , reject() 는 내부에서 MessageCodesResolver 를 사용한다. 여기에서 메시지 코드들 을 생성한다.
   - FieldError , ObjectError 의 생성자를 보면, 오류 코드를 하나가 아니라 여러 오류 코드를 가질 수 있다.
