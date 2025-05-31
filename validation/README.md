@@ -103,3 +103,67 @@
     - 타입 오류로 바인딩에 실패하면 스프링은 FieldError 를 생성하면서 사용자가 입력한 값을 넣어둔다.                                     c c  
     - 그리고 해당 오류를 BindingResult 에 담아서 컨트롤러를 호출한다. 
     - 따라서 타입 오류 같은 바인딩 실패시에도 사용자의 오류 메시지를 정상 출력할 수 있다.
+
+## 오류 코드와 메시지 처리
+
+- FieldError , ObjectError 는 다루기 너무 번거롭다.
+  - 오류 코드도 좀 더 자동화 할 수 있지 않을까? 예) item.itemName 처럼?
+    - 컨트롤러에서 BindResult는 검증해야 할 객체인 target 바로 다음에 온다. 
+      - 따라서 BindingResult 는 이미 본인이 검증해야 할 객체인 target 을 알고 있다.
+
+- log.info("objectName={}", bindingResult.getObjectName());
+- log.info("target={}", bindingResult.getTarget());
+  - 컨트롤러에서 다음의 코드를 실행하면 
+    - objectName=item //@ModelAttribute name
+    - target=Item(id=null, itemName=상품, price=100, quantity=1234)
+
+- rejectValue() , reject()
+  - BindingResult 가 제공하는 rejectValue() , reject() 를 사용하면 FieldError , ObjectError 를 직접 생성하지 않고, 깔끔하게 검증 오류를 다룰 수 있다.
+
+  - rejectValue()
+  ```java
+  void rejectValue(@Nullable String field, String errorCode,
+  @Nullable Object[] errorArgs, @Nullable String defaultMessage);
+  ```
+    - 파라미터
+      - field : 오류 필드명
+      - errorCode : 오류 코드(이 오류 코드는 메시지에 등록된 코드가 아니다. 뒤에서 설명할 messageResolver를 위한 오류 코드이다.)
+      - errorArgs : 오류 메시지에서 {0} 을 치환하기 위한 값
+      - defaultMessage : 오류 메시지를 찾을 수 없을 때 사용하는 기본 메시지
+
+  - reject()
+  ```java
+  void reject(String errorCode, @Nullable Object[] errorArgs, @Nullable String defaultMessage);
+  ```
+
+- bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null) ```
+  - 앞에서 BindingResult 는 어떤 객체를 대상으로 검증하는지 target을 이미 알고 있다고 했다. 
+  - 따라서 target(item)에 대한 정보는 없어도 된다. 
+  - 오류 필드명은 동일하게 price 를 사용했다.
+  
+- 축약된 오류 코드
+  - FieldError() 를 직접 다룰 때는 오류 코드를 range.item.price 와 같이 모두 입력했다. 
+  - 그런데 rejectValue() 를 사용하고 부터는 오류 코드를 range 로 간단하게 입력했다. 
+  - 그래도 오류 메시지를 잘 찾아서 출력한다. 무언가 규칙이 있는 것 처럼 보인다. 
+    - 이 부분을 이해하려면 MessageCodesResolver 를 이해해야 한다. 뒤에 정리핟록 하겠다.
+
+### 오류 코드  자세히/단순히 작성 가능
+- 자세히
+  - required.item.itemName : 상품 이름은 필수 입니다.
+  - range.item.price : 상품의 가격 범위 오류 입니다.
+- 단순히
+  - required : 필수 값 입니다.
+  - range : 범위 오류 입니다.
+
+- 각각의 단점
+  - 단순하게 만들면 범용성이 좋아서 여러곳에서 사용할 수 있지만, 메시지를 세밀하게 작성하기 어렵다. 
+  - 반대로 너무 자세하게 만들면 범용성이 떨어진다. 
+    - 가장 좋은 방법은 범용성으로 사용하다가, 세밀하게 작성해야 하는 경우에는 세밀한 내용이 적용되도록 메시지에 단계를 두는 방법이다.
+
+- 단순/세밀 코드 구분 위해서 우선순위 사용.
+  - #Level1
+    required.item.itemName: 상품 이름은 필수 입니다.
+  - #Level2
+    required: 필수 값 입니다.
+- 스프링은 MessageCodesResolver 라는 것으로 이러한 기능을 지원한다.
+
