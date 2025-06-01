@@ -16,3 +16,4 @@
 
 - validation
   - 검증1 학습
+  - 검증2 - Bean validation 학습
