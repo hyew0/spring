@@ -362,3 +362,25 @@
   - Bean Validation은 특정한 구현체가 아니라 Bean Validation 2.0(JSR-380)이라는 기술 표준이다. 
   - 쉽게 이야기해서 검증 애노테이션과 여러 인터페이스의 모음이다. 
     - 마치 JPA가 표준 기술이고 그 구현체로 하이버네이트가 있는 것과 같다.
+
+## Bean Validation - 시작
+
+- 스프링과 통합하지 않은 순수한 Bean Validation
+  - Bean Validation을 사용하려면 다음 의존관계를 추가해야 한다.
+  - build.gradle
+    - ```
+      implementation 'org.springframework.boot:spring-boot-starter-validation'
+      ```
+  - Jakarta Bean Validation
+    - jakarta.validation-api : Bean Validation 인터페이스
+    - hibernate-validator 구현체
+- 검증 애노테이션
+  - @NotBlank : 빈값 + 공백만 있는 경우를 허용하지 않는다.
+  - @NotNull : null 을 허용하지 않는다.
+  - @Range(min = 1000, max = 1000000) : 범위 안의 값이어야 한다.
+  - @Max(9999) : 최대 9999까지만 허용한다.
+
+- 참고
+  - javax.validation 으로 시작하면 특정 구현에 관계없이 제공되는 표준 인터페이스이고,
+  - org.hibernate.validator 로 시작하면 하이버네이트 validator 구현체를 사용할 때만 제공되는 검증 기능이다. 
+  - 실무에서 대부분 하이버네이트 validator를 사용하므로 자유롭게 사용해도 된다.
