@@ -481,3 +481,19 @@
 ## Bean Validation - 한계
 - 만약 등록과 수정에서의 요구 사항이 다를 시에 이를 적용하고자 하면 기능이 제대로 작동하지 않을 수 있다.
   - 검증 조건의 충돌이 발생하고, 등록과 수정은 같은 BeanValidation을 적용할 수 없다. 이 문제를 해결하려면 어떻게 해야 할까?
+
+## Bean Validation - groups
+- 방법 2가지
+  - BeanValidation의 groups 기능을 사용한다.
+  - Item을 직접 사용하지 않고, ItemSaveForm, ItemUpdateForm 같은 폼 전송을 위한 별도의 모델 객체를 만들어서 사용한다.
+
+- BeanValidation groups 기능 사용
+  - 이런 문제를 해결하기 위해 Bean Validation은 groups라는 기능을 제공한다.
+  - 예를 들어서 등록시에 검증할 기능과 수정시에 검증할 기능을 각각 그룹으로 나누어 적용할 수 있다.
+- 참고
+  - @Valid 에는 groups를 적용할 수 있는 기능이 없다. 따라서 groups를 사용하려면 @Validated 를 사용해야 한다.
+
+- 정리
+  - groups 기능을 사용해서 등록과 수정시에 각각 다르게 검증을 할 수 있었다. 
+    - 그런데 groups 기능을 사용하니 Item 은 물론이고, 전반적으로 복잡도가 올라갔다.
+  - 사실 groups 기능은 실제 잘 사용되지는 않는데, 그 이유는 실무에서는 주로 다음에 등장하는 등록용 폼 객체와 수정용 폼 객체를 분리해서 사용하기 때문이다.
