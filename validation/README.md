@@ -499,3 +499,54 @@
   - 사실 groups 기능은 실제 잘 사용되지는 않는데, 그 이유는 실무에서는 주로 다음에 등장하는 등록용 폼 객체와 수정용 폼 객체를 분리해서 사용하기 때문이다.
 
 ## Form 전송 객체 분리
+- ValidationItemV4Controller
+  - 실무에서는 groups 를 잘 사용하지 않는데, 그 이유가 다른 곳에 있다. 바로 등록시 폼에서 전달하는 데이터가 Item 도메인 객체와 딱 맞지 않기 때문이다.
+  - 소위 "Hello World" 예제에서는 폼에서 전달하는 데이터와 Item 도메인 객체가 딱 맞는다. 
+  - 하지만 실무에서는 회원 등록시 회원과 관련된 데이터만 전달받는 것이 아니라, 약관 정보도 추가로 받는 등 Item 과 관계없는 수 많은 부가 데이터가 넘어온다.
+  - 그래서 보통 Item 을 직접 전달받는 것이 아니라, 복잡한 폼의 데이터를 컨트롤러까지 전달할 별도의 객체를 만들어서 전달한다. 
+    - 예를 들면 ItemSaveForm 이라는 폼을 전달받는 전용 객체를 만들어서 @ModelAttribute 로 사용한다.
+    - 이것을 통해 컨트롤러에서 폼 데이터를 전달 받고, 이후 컨트롤러에서 필요한 데이터를 사용해서 Item 을 생성한다.
+
+- 폼 데이터 전달에 Item 도메인 객체 사용
+  - HTML Form -> Item -> Controller -> Item -> Repository
+  - 장점: Item 도메인 객체를 컨트롤러, 리포지토리 까지 직접 전달해서 중간에 Item을 만드는 과정이 없어서 간단하다.
+  - 단점: 간단한 경우에만 적용할 수 있다. 수정시 검증이 중복될 수 있고, groups를 사용해야 한다.
+- 폼 데이터 전달을 위한 별도의 객체 사용
+  - HTML Form -> ItemSaveForm -> Controller -> Item 생성 -> Repository
+  - 장점: 전송하는 폼 데이터가 복잡해도 거기에 맞춘 별도의 폼 객체를 사용해서 데이터를 전달 받을 수 있다. 
+    - 보통 등록과, 수정용으로 별도의 폼 객체를 만들기 때문에 검증이 중복되지 않는다.
+  - 단점: 폼 데이터를 기반으로 컨트롤러에서 Item 객체를 생성하는 변환 과정이 추가된다.
+  
+- 실제 수정과 등록 폼에서 다루는 데이터 범위가 다르고 데이터가 방대하기 때문에 별도의 객체로 데이터를 전달받는 것이 좋다.
+- Q: 등록, 수정용 뷰 템플릿이 비슷한데 합치는게 좋을까요?
+  - 뷰 템플릿 파일을 등록과 수정을 합치는게 좋을지 고민이 될 수 있다. 각각 장단점이 있으므로 고민하는게 좋지만, 
+    - 어설프게 합치면 수 많은 분기문(등록일 때, 수정일 때) 때문에 나중에 유지보수에서 고통을 맛본다.
+    - 이런 어설픈 분기문들이 보이기 시작하면 분리해야 할 신호이다
+
+
+#### 폼 객체 바인딩 
+```java
+@PostMapping("/add")
+public String addItem(@Validated @ModelAttribute("item") ItemSaveForm form,
+  BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+  //...
+}
+```
+- Item 대신에 ItemSaveform 을 전달 받는다. 그리고 @Validated 로 검증도 수행하고, BindingResult 로 검증 결과도 받는다.
+
+- 주의
+  - @ModelAttribute("item") 에 item 이름을 넣어준 부분을 주의하자. 
+  - 이것을 넣지 않으면 ItemSaveForm 의 경우 규칙에 의해 itemSaveForm 이라는 이름으로 MVC Model에 담기게 된다. 
+  - 이렇게 되면 뷰 템플릿에서 접근하는 th:object 이름도 함께 변경해주어야 한다.
+  
+#### 폼 객체를 Item으로 변환 
+```java
+  //성공 로직
+  Item item = new Item();
+  item.setItemName(form.getItemName());
+  item.setPrice(form.getPrice());
+  item.setQuantity(form.getQuantity());
+  Item savedItem = itemRepository.save(item); 
+```
+- 폼 객체의 데이터를 기반으로 Item 객체를 생성한다. 
+  - 이렇게 폼 객체 처럼 중간에 다른 객체가 추가되면 변환하는 과정이 추가된다.
