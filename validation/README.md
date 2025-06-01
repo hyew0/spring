@@ -478,3 +478,6 @@
             return "redirect:/validation/v3/items/{itemId}";
         }
         ```
+## Bean Validation - 한계
+- 만약 등록과 수정에서의 요구 사항이 다를 시에 이를 적용하고자 하면 기능이 제대로 작동하지 않을 수 있다.
+  - 검증 조건의 충돌이 발생하고, 등록과 수정은 같은 BeanValidation을 적용할 수 없다. 이 문제를 해결하려면 어떻게 해야 할까?
