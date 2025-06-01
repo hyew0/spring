@@ -334,3 +334,31 @@
     - implementation 'org.springframework.boot:spring-boot-starter-validation'
   - @Validated 는 스프링 전용 검증 애노테이션이고, @Valid 는 자바 표준 검증 애노테이션이다.
   - 자세한 내용은 다음 Bean Validation에서 설명하겠다.
+
+# Bean Validation
+
+## 소개
+- 검증을 위에 처럼 매번 코드로 작성하는 것은 번거롭다.
+  - 특히 특정 필드에 대한 검증 로직은 대부분 빈 값인지 아닌지, 특정 크기를 넘는지 아닌지와 같이 매우 일반적인 로직.
+  - ```java
+    public class Item {
+      private Long id;
+    
+      @NotBlank
+      private String itemName;
+    
+      @NotNull
+      @Range(min = 1000, max = 1000000)
+      private Integer price;
+    
+      @NotNull
+      @Max(9999)
+      private Integer quantity;
+    
+      //...
+    }
+    ```
+- Bean Validation 이란?
+  - Bean Validation은 특정한 구현체가 아니라 Bean Validation 2.0(JSR-380)이라는 기술 표준이다. 
+  - 쉽게 이야기해서 검증 애노테이션과 여러 인터페이스의 모음이다. 
+    - 마치 JPA가 표준 기술이고 그 구현체로 하이버네이트가 있는 것과 같다.
