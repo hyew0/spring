@@ -425,3 +425,19 @@
     - BeanValidator는 바인딩에 실패한 필드는 BeanValidation을 적용하지 않는다.
     - 생각해보면 타입 변환에 성공해서 바인딩에 성공한 필드여야 BeanValidation 적용이 의미 있다.(일단 모델 객체에 바인딩 받는 값이 정상으로 들어와야 검증도 의미가 있다.)
   - @ModelAttribute -> 각각의 필드 타입 변환시도 -> 변환에 성공한 필드만 BeanValidation 적용
+
+## Bean Validation - 에러 코드
+- Bean Validation이 기본으로 제공하는 오류 메시지를 좀 더 자세히 변경하고 싶으면 어떻게 하면 될까?
+- Bean Validation을 적용하고 bindingResult 에 등록된 검증 오류 코드를 보자.
+  - 오류 코드가 애노테이션 이름으로 등록된다. 마치 typeMismatch 와 유사하다.
+- NotBlank 라는 오류 코드를 기반으로 MessageCodesResolver 를 통해 다양한 메시지 코드가 순서대로 생성된다.
+  - @NotBlank
+    - NotBlank.item.itemName
+    - NotBlank.itemName
+    - NotBlank.java.lang.String
+    - NotBlank
+  - @Range
+    - Range.item.price
+    - Range.price
+    - Range.java.lang.Integer
+    - Range
