@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
@@ -50,7 +51,7 @@ public class HomeController {
     - 로그인 쿠키( memberId )가 있는 사용자는 로그인 사용자 전용 홈 화면인 loginHome 으로 보낸다. 추가로 홈화면에 화원 관련 정보도 출력해야 해서 member 데이터도 모델에 담아서 전달한다.
     * */
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public String homeLoginV2(
             HttpServletRequest request,
             Model model
@@ -66,4 +67,30 @@ public class HomeController {
         model.addAttribute("member", member);
         return "loginHome";
     }
+
+    @GetMapping("/")
+    public String homeLoginV3(HttpServletRequest request, Model model) {
+        //세션이 없으면 home
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return "home";
+        }
+
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        //세션에 회원 데이터가 없으면 home
+        if (loginMember == null) {
+            return "home";
+        }
+
+        //세션이 유지되면 로그인으로 이동
+        model.addAttribute("member", loginMember);
+        return "loginHome";
+    }
+    /**
+     request.getSession(false) :
+        request.getSession() 를 사용하면 기본 값이 create: true 이므로, 로그인 하지 않을 사용자도 의미없는 세션이 만들어진다.
+        따라서 세션을 찾아서 사용하는 시점에는 create: false 옵션을 사용해서 세션을 생성하지 않아야 한다.
+     session.getAttribute(SessionConst.LOGIN_MEMBER) :
+        로그인 시점에 세션에 보관한 회원 객체를 찾는다.
+     * */
 }
