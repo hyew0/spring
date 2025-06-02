@@ -135,3 +135,33 @@
     - 세션이 없으면 새로운 세션을 생성하지 않는다. null 을 반환한다.
 
 - session.invalidate() : 세션을 제거한다.
+
+## 로그인 처리하기 - 서블릿 HTTP 세션2
+#### @SessionAttribute
+- 스프링은 세션을 더 편리하게 사용할 수 있도록 @SessionAttribute 을 지원한다.
+- 이미 로그인 된 사용자를 찾을 때는 다음과 같이 사용하면 된다. 참고로 이 기능은 세션을 생성하지 않는다.
+  - @SessionAttribute(name = "loginMember", required = false) Member loginMember
+
+#### TrackingModes
+- 로그인을 처음 시도하면 URL이 다음과 같이 jsessionid 를 포함하고 있는 것을 확인할 수 있다.
+  - http://localhost:8080/;jsessionid=F59911518B921DF62D09F0DF8F83F872
+  - 이것은 웹 브라우저가 쿠키를 지원하지 않을 때 쿠키 대신 URL을 통해 세션을 유지하는 방법.
+  - 이 방법을 사용하려면 URL에 이 값을 계속 포함해서 전달해야 한다. 
+    - 타임리프 같은 템플릿은 엔진을 통해서 링크를 걸면 jsessionid 를 URL에 자동으로 포함해준다.
+  - 서버 입장에서 웹 브라우저가 쿠키를 지원하는지 하지 않는지 최초에는 판단하지 못하므로, 쿠키 값도 전달하고, URL에 jsessionid 도 함께 전달한다.
+- URL 전달 방식을 끄고 항상 쿠키를 통해서만 세션을 유지하고 싶으면 다음 옵션을 넣어주면 된다. 이렇게 하면 URL에 jsessionid 가 노출되지 않는다
+  - ```properties
+      server.servlet.session.tracking-modes=cookie
+    ```
+- 스프링에서는 URL 매핑 전략이 변경되었다.
+  -  따라서 다음과 같이 출력될 때 컨트롤러를 찾지 못하고 404 오류가 발생할 수 있다.
+    - http://localhost:8080/;jsessionid=F59911518B921DF62D09F0DF8F83F872
+  - 해결 방법
+    - session.tracking-modes를 사용하는 것.
+      - ```properties
+          server.servlet.session.tracking-modes=cookie
+        ```
+    - 만약 URL에 jsessionid가 꼭 필요하다면 application.properties에 다음 옵션을 추가
+      - ```properties
+          spring.mvc.pathmatch.matching-strategy=ant_path_matcher
+        ```
