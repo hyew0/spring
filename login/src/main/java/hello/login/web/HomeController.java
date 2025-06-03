@@ -2,6 +2,7 @@ package hello.login.web;
 
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
+import hello.login.web.argumentresolver.Login;
 import hello.login.web.session.SessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class HomeController {
     ) {
 
         //세션 관리자에 저장된 회원 정보 조회
-        Member member = (Member)sessionManager.getSession(request);
+        Member member = (Member) sessionManager.getSession(request);
         if (member == null) {
             return "home";
         }
@@ -87,15 +88,16 @@ public class HomeController {
         model.addAttribute("member", loginMember);
         return "loginHome";
     }
-    /**
-     request.getSession(false) :
-        request.getSession() 를 사용하면 기본 값이 create: true 이므로, 로그인 하지 않을 사용자도 의미없는 세션이 만들어진다.
-        따라서 세션을 찾아서 사용하는 시점에는 create: false 옵션을 사용해서 세션을 생성하지 않아야 한다.
-     session.getAttribute(SessionConst.LOGIN_MEMBER) :
-        로그인 시점에 세션에 보관한 회원 객체를 찾는다.
-     * */
 
-    @GetMapping("/")
+    /**
+     * request.getSession(false) :
+     * request.getSession() 를 사용하면 기본 값이 create: true 이므로, 로그인 하지 않을 사용자도 의미없는 세션이 만들어진다.
+     * 따라서 세션을 찾아서 사용하는 시점에는 create: false 옵션을 사용해서 세션을 생성하지 않아야 한다.
+     * session.getAttribute(SessionConst.LOGIN_MEMBER) :
+     * 로그인 시점에 세션에 보관한 회원 객체를 찾는다.
+     */
+
+    //@GetMapping("/")
     public String homeLoginV3Spring(
             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember,
             Model model) {
@@ -110,6 +112,18 @@ public class HomeController {
         return "loginHome";
     }
     /*
-    * 세션을 찾고, 세션에 들어있는 데이터를 찾는 번거로운 과정을 스프링이 한번에 편리하게 처리해주는 것을 확인할 수 있다.
-    * */
+     * 세션을 찾고, 세션에 들어있는 데이터를 찾는 번거로운 과정을 스프링이 한번에 편리하게 처리해주는 것을 확인할 수 있다.
+     * */
+
+    @GetMapping("/")
+    public String homeLoginV3ArgumentResolver(@Login Member loginMember, Model model) {
+        //세션에 회원 데이터가 없으면 home
+        if (loginMember == null) {
+            return "home";
+        }
+
+        //세션이 유지되면 로그인으로 이동
+        model.addAttribute("member", loginMember);
+        return "loginHome";
+    }
 }
