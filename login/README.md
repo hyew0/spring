@@ -270,6 +270,16 @@ public interface Filter {
   - destroy(): 필터 종료 메서드, 서블릿 컨테이너가 종료될 때 호출된다.
 
 ## 서블릿 필터 - 요청 로그
+- 필터가 수문장 역할을 하는지 확인하기 위해 모든 요청을 로그로 남기는 필터를 만들어본다.
+
+- 필터를 등록하는 방법은 여러가지가 있지만, 스프링 부트를 사용한다면 FilterRegistrationBean 을 사용해서 등록하면 된다.
+  - setFilter(new LogFilter()) : 등록할 필터를 지정한다.
+  - setOrder(1) : 필터는 체인으로 동작한다. 따라서 순서가 필요하다. 낮을 수록 먼저 동작한다.
+  - addUrlPatterns("/*") : 필터를 적용할 URL 패턴을 지정한다. 한번에 여러 패턴을 지정할 수 있다
+    - url 패턴에 대한 룰은 필터도 서블릿과 동일.
+- 참고
+  - @ServletComponentScan @WebFilter(filterName = "logFilter", urlPatterns = "/*") 로 필터 등록이 가능하지만 필터 순서 조절이 안된다. 
+    - 따라서 FilterRegistrationBean 을 사용하자.
 
 ## 서블릿 필터 - 인증 체크
 
