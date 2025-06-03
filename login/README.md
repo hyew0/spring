@@ -428,5 +428,12 @@ public interface HandlerInterceptor {
         - https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html
 
 ## 스프링 인터셉터 - 인증 체크
+- 인증 체크 기능 스프링 인터셉터로 구현.
+  - LoginCheckInterceptor
+
+- 정리
+  - 서블릿 필터와 스프링 인터셉터는 웹과 관련된 공통 관심사를 해결하기 위한 기술이다.
+  - 서블릿 필터와 비교해서 스프링 인터셉터가 개발자 입장에서 훨씬 편리하다는 것을 코드로 이해했다. 
+  - 특별한 문제가 없다면 인터셉터를 사용하는 것이 좋다.
 
 ## ArguementResolver 활용
