@@ -280,8 +280,10 @@ public interface Filter {
 - 참고
   - @ServletComponentScan @WebFilter(filterName = "logFilter", urlPatterns = "/*") 로 필터 등록이 가능하지만 필터 순서 조절이 안된다. 
     - 따라서 FilterRegistrationBean 을 사용하자.
+  - 실무에서 HTTP 요청시 같은 요청의 로그에 모두 같은 식별자를 자동으로 남기는 방법은 logback mdc로 검색해보자.
 
 ## 서블릿 필터 - 인증 체크
+
 
 ## 스프링 인터셉터 - 소개
 
