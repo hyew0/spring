@@ -283,7 +283,29 @@ public interface Filter {
   - 실무에서 HTTP 요청시 같은 요청의 로그에 모두 같은 식별자를 자동으로 남기는 방법은 logback mdc로 검색해보자.
 
 ## 서블릿 필터 - 인증 체크
+- 로그인 되지 않은 사용자는 상품 관리 뿐 아니라 이후에 개발될 페이지에도 접근하지 못하도록 막는다.
 
+- LoginCheckFilter - 인증 체크 필터
+  - whitelist = {"/", "/members/add", "/login", "/logout","/css/*"};
+    - 인증 필터를 적용해도 홈, 회원가입, 로그인화면, css 같은 리소스에는 접근할 수 있어야 한다.
+    - 화이트 리스트로 작성해서 인증과 무관하게 허용되도록 해준다.
+  - isLoginCheckPath(requestURI)
+    - 화이트 리스트를 제외한 모든 경우에 인증 체크 로직을 적용한다.
+  - httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
+    - 미인증 사용자는 로그인 화면으로 리다이렉트
+    - 그러나 인증 사용자는 로그인을 진행하기 전에 머물렀던 페이지가 있을 수 있는데, 홈으로 돌아가면 불편하다.
+      - 개발자가 귀찮더라도 사용자 입장에서는 편리한 기능이다.
+      - 이러한 기능을 위해 현재 요청한 경로인 requestURI를 /login에 쿼리 파라미터로 함께 전달한다.
+        - 물론 /login 컨트롤러에서 로그인 성공 시 해당 경로로 이동하는 기능은 추가로 개발해야 한다.
+
+- WebConfig - loginCheckFilter() 추가
+  - setFilter(new LoginCheckFilter()) : 로그인 필터를 등록한다.
+  - setOrder(2) : 순서를 2번으로 잡았다. 로그 필터 다음에 로그인 필터가 적용된다.
+  - addUrlPatterns("/*") : 모든 요청에 로그인 필터를 적용한다.
+
+- 참고
+  - 필터에는 다음에 설명할 스프링 인터셉터는 제공하지 않는, 아주 강력한 기능이 있는데 
+    - chain.doFilter(request, response); 를 호출해서 다음 필터 또는 서블릿을 호출할 때 request , response 를 다른 객체로 바꿀 수 있다.
 
 ## 스프링 인터셉터 - 소개
 
