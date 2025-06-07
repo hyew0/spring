@@ -1,4 +1,4 @@
-# 예외 처리와 오류 페이지
+# 1. 예외 처리와 오류 페이지
 
 ## 서블릿 예외 처리 - 시작
 - 스프링이 아닌 순수 서블릿 컨테이너는 예외를 어떻게 처리하는지를 알아본다.
@@ -226,7 +226,7 @@
 - 확장 포인트
   - 에러 공통 처리 컨트롤러의 기능을 변경하고 싶으면 ErrorController 인터페이스를 상속 받아서 구현하거나 BasicErrorController 상속 받아서 기능을 추가하면 된다.
 
-# API 예외 처리
+# 2. API 예외 처리
 
 - HTML 페이지의 경우에는 오류 페이지를 보여주면 끝.
   - 그러나 API는 오류 상황에 맞는 오류 응답 스펙을 정하고, JSON으로 데이터를 내려줘야 한다.
@@ -235,3 +235,38 @@
   - produces = MediaType.APPLICATION_JSON_VALUE 의 뜻은 클라이언트가 요청하는 HTTP Header의 Accept 의 값이 application/json 일 때 해당 메서드가 호출된다는 것
   - 클라어인트가 받고 싶은 미디어 타입이 json이면 이 컨트롤러의 메서드가 호출된다.
     - @RequestMapping(value = "/error-page/500", produces = MediaType.APPLICATION_JSON_VALUE)
+
+## API 예외 처리 - 스프링 부트 기본 오류 처리
+- API 예외 처리도 스프링 부트가 제공하는 기본 오류 방식을 사용할 수 있다.
+  - 스프링 부트가 제공하는 BasicErrorController
+    - code - BasicErrorController
+      - ```java
+        @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
+        public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {}
+        
+        @RequestMapping
+        public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {}
+        ```
+    - errorHtml() 
+      - produces = MediaType.TEXT_HTML_VALUE 
+      - 클라이언트 요청의 Accept 해더 값이 text/html 인 경우에는 errorHtml() 을 호출해서 view를 제공한다.
+    - error() 
+      - 그 외 경우에 호출되고 ResponseEntity 로 HTTP Body에 JSON 데이터를 반환한다.
+  - 스프링 부트의 예외 처리
+    - 스프링 부트의 기본 설정은 오류 발생시 /error 를 오류 페이지로 요청한다.
+    - BasicErrorController 는 이 경로를 기본으로 받는다. ( server.error.path 로 수정 가능, 기본 경로 /error )
+
+- 다음 옵션들 설정 시 더 자세한 오류 정보 추가 가능.
+  - 종류
+    - server.error.include-binding-errors=always
+    - server.error.include-exception=true
+    - server.error.include-message=always
+    - server.error.include-stacktrace=always
+  - 오류 메시지는 막 추가하면 보안상 위험할 수 있다. 간결한 메시지만 노출하고, 로그를 통해서 확인하도록 해야 한다.
+
+### Html 페이지 vs API 오류
+- BasicErrorController 를 확장하면 JSON 메시지도 변경할 수 있다. 
+  - 그런데 API 오류는 @ExceptionHandler 가 제공하는 기능을 사용하는 것이 더 나은 방법이므로 일단은 
+    - BasicErrorController 를 확장해서 JSON 오류 메시지를 변경할 수 있다 정도로만 이해해두자.
+    -  -> BasicErrorController = HTML
+          @ExceptionHandler =  API 오류 처리
