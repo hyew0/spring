@@ -231,4 +231,7 @@
 - HTML 페이지의 경우에는 오류 페이지를 보여주면 끝.
   - 그러나 API는 오류 상황에 맞는 오류 응답 스펙을 정하고, JSON으로 데이터를 내려줘야 한다.
 
-- API의 경우 어떻게 오류 처리르 하면 좋을지 알아본다.
+- API의 경우 어떻게 오류 처리를 하면 좋을지 알아본다.
+  - produces = MediaType.APPLICATION_JSON_VALUE 의 뜻은 클라이언트가 요청하는 HTTP Header의 Accept 의 값이 application/json 일 때 해당 메서드가 호출된다는 것
+  - 클라어인트가 받고 싶은 미디어 타입이 json이면 이 컨트롤러의 메서드가 호출된다.
+    - @RequestMapping(value = "/error-page/500", produces = MediaType.APPLICATION_JSON_VALUE)
