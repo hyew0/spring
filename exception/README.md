@@ -329,3 +329,39 @@
     - 반면에 ExceptionResolver 를 사용하면 예외처리가 상당히 깔끔해진다.
   - 그런데 직접 ExceptionResolver 를 구현하려고 하니 상당히 복잡하다. 
     - 지금부터 스프링이 제공하는 ExceptionResolver 들을 알아보자.
+
+## API 예외 처리 - 스프링이 제공하는 ExceptionResolver1
+
+- 스프링 부트가 기본으로 제공하는 ExceptionResolver 는 다음과 같다.
+  - HandlerExceptionResolverComposite 에 다음 순서로 등록
+    - ExceptionHandlerExceptionResolver
+    - ResponseStatusExceptionResolver
+    - DefaultHandlerExceptionResolver -> 우선 순위가 가장 낮다.
+    
+  - ExceptionHandlerExceptionResolver
+    - @ExceptionHandler 을 처리한다. 
+    - API 예외 처리는 대부분 이 기능으로 해결한다. 조금 뒤에 자세히 설명한다.
+  - ResponseStatusExceptionResolver
+    - HTTP 상태 코드를 지정해준다.
+  - DefaultHandlerExceptionResolver
+    - 스프링 내부 기본 예외를 처리한다.
+
+### ResponseStatusExceptionResolver
+- ResponseStatusExceptionResolver 는 예외에 따라서 HTTP 상태 코드를 지정해주는 역할을 한다.
+- 두 가지 경우를 처리한다.
+  - @ResponseStatus 가 달려있는 예외
+  - ResponseStatusException 예외
+
+- 메시지 기능
+  - reason 을 MessageSource 에서 찾는 기능도 제공한다. reason = "error.bad"
+    - @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "error.bad")
+  - messages.properties에 코드 작성.
+    - ```properties
+      error.bad=잘못된 요청 오류입니다. 메시지 사용
+      ```
+      
+- ResponseStatusException
+  - @ResponseStatus 는 개발자가 직접 변경할 수 없는 예외에는 적용할 수 없다. 
+    - (애노테이션을 직접 넣어야 하는데, 내가 코드를 수정할 수 없는 라이브러리의 예외 코드 같은 곳에는 적용할 수 없다.)
+  - 추가로 애노테이션을 사용하기 때문에 조건에 따라 동적으로 변경하는 것도 어렵다. 
+    - 이때는 ResponseStatusException 예외를 사용하면 된다.
