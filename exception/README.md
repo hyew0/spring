@@ -435,3 +435,37 @@
   - @ExceptionHandler 에는 마치 스프링의 컨트롤러의 파라미터 응답처럼 다양한 파라미터와 응답을 지정할 수 있다.
   - 자세한 파라미터와 응답은 다음 공식 메뉴얼을 참고.
     - https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-annexceptionhandler-args
+
+## API 예외 처리 - @ControllerAdvice
+- @ExceptionHandler 를 사용해서 예외를 깔끔하게 처리할 수 있게 되었지만, 정상 코드와 예외 처리 코드가 하나의 컨트롤러에 섞여 있다. 
+  - @ControllerAdvice 또는 @RestControllerAdvice 를 사용하면 둘을 분리할 수 있다.
+
+- @ControllerAdvice
+  - @ControllerAdvice 는 대상으로 지정한 여러 컨트롤러에 @ExceptionHandler , @InitBinder 기능을 부여해주는 역할을 한다.
+  - @ControllerAdvice 에 대상을 지정하지 않으면 모든 컨트롤러에 적용된다. (글로벌 적용)
+  - @RestControllerAdvice 는 @ControllerAdvice 와 같고, @ResponseBody 가 추가되어 있다.
+    - @Controller , @RestController 의 차이와 같다.
+
+- 대상 컨트롤러 지정 방법 
+  - ```java
+    // Target all Controllers annotated with @RestController
+    @ControllerAdvice(annotations = RestController.class)
+    public class ExampleAdvice1 {}
+    
+    // Target all Controllers within specific packages
+    @ControllerAdvice("org.example.controllers")
+    public class ExampleAdvice2 {}
+    
+    // Target all Controllers assignable to specific classes
+    @ControllerAdvice(assignableTypes = {ControllerInterface.class, AbstractController.class})
+    public class ExampleAdvice3 {} 
+    ```
+    - 스프링 공식 문서 참고
+      - https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-anncontroller-advice 
+      - 스프링 공식 문서 예제에서 보는 것 처럼 특정 애노테이션이 있는 컨트롤러를 지정할 수 있고, 
+        - 특정 패키지를 직접 지정할 수도 있다. 
+          - 패키지 지정의 경우 해당 패키지와 그 하위에 있는 컨트롤러가 대상이 된다. 
+        - 그리고 특정 클래스를 지정할 수도 있다.
+        - 대상 컨트롤러 지정을 생략하면 모든 컨트롤러에 적용된다.
+
+### @ExceptionHandler 와 @ControllerAdvice 를 조합하면 예외를 깔끔하게 해결할 수 있다.
