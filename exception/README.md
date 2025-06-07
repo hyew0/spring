@@ -375,3 +375,63 @@
     - HTTP 에서는 이런 경우 HTTP 상태 코드 400을 사용하도록 되어 있다.
     - DefaultHandlerExceptionResolver 는 이것을 500 오류가 아니라 HTTP 상태 코드 400 오류로 변경한다.
     - 스프링 내부 오류를 어떻게 처리할지 수 많은 내용이 정의되어 있다.
+
+## API 예외 처리 - @ExceptionHandler
+- API 예외처리의 어려운 점
+  - HandlerExceptionResolver 를 떠올려 보면 ModelAndView 를 반환해야 했다. 
+    - 이것은 API 응답에는 필요하지 않다.
+  - API 응답을 위해서 HttpServletResponse 에 직접 응답 데이터를 넣어주었다. 이것은 매우 불편하다. 
+    - 스프링 컨트롤러에 비유하면 마치 과거 서블릿을 사용하던 시절로 돌아간 것 같다.
+  - 특정 컨트롤러에서만 발생하는 예외를 별도로 처리하기 어렵다. 
+    - 예를 들어서 회원을 처리하는 컨트롤러에서 발생하는 RuntimeException 예외와 상품을 관리하는 컨트롤러에서 발생하는 동일한 RuntimeException 예외를 서로 다른 방식으로 처리하고 싶다면 어떻게 해야할까?
+
+- @ExceptionHandler
+  - 스프링은 API 예외 처리 문제를 해결하기 위해 @ExceptionHandler 라는 애노테이션을 사용하는 매우 편리한 예외 처리 기능을 제공하는데, 
+    - 이것이 바로 ExceptionHandlerExceptionResolver 이다. 
+    - 스프링은 ExceptionHandlerExceptionResolver 를 기본으로 제공하고, 기본으로 제공하는 ExceptionResolver 중에 우선순위도 가장 높다. 
+    - 실무에서 API 예외 처리는 대부분 이 기능을 사용한다.
+- @ExceptionHandler 예외 처리 방법
+  - @ExceptionHandler 애노테이션을 선언하고, 해당 컨트롤러에서 처리하고 싶은 예외를 지정해주면 된다. 
+  - 해당 컨트롤러에서 예외가 발생하면 이 메서드가 호출된다.
+  - 참고로 지정한 예외 또는 그 예외의 자식 클래스는 모두 잡을 수 있다.
+  - 다음 예제는 IllegalArgumentException 또는 그 하위 자식 클래스를 모두 처리할 수 있다. 
+    - ```java
+      @ExceptionHandler(IllegalArgumentException.class)
+      public ErrorResult illegalExHandle(IllegalArgumentException e) {
+        log.error("[exceptionHandle] ex", e);
+        return new ErrorResult("BAD", e.getMessage());
+      }
+      ```
+- 우선 순위
+  - 스프링의 우선순위는 항상 자세한 것이 우선권을 가진다. 예를 들어서 부모, 자식 클래스가 있고 다음과 같이 예외가 처
+    리된다. 
+    - ```
+      @ExceptionHandler(부모예외.class)
+      public String 부모예외처리()(부모예외 e) {}
+      
+      @ExceptionHandler(자식예외.class)
+      public String 자식예외처리()(자식예외 e) {}
+      ```
+      - @ExceptionHandler 에 지정한 부모 클래스는 자식 클래스까지 처리할 수 있다. 
+        - 따라서 자식예외 가 발생하면 부모 예외처리() , 자식예외처리() 둘다 호출 대상이 된다. 
+        - 그런데 둘 중 더 자세한 것이 우선권을 가지므로 자식예외처리()가 호출된다. 
+        - 물론 부모예외 가 호출되면 부모예외처리() 만 호출 대상이 되므로 부모예외처리() 가 호출된다.
+
+- 다양한 예외
+  - 다음과 같이 다양한 예외를 한번에 처리할 수 있다. 
+    - ```
+      @ExceptionHandler({AException.class, BException.class})
+      public String ex(Exception e) {
+        log.info("exception e", e);
+      }
+      ```
+- 예외 생략
+  - @ExceptionHandler에 예외를 생략할 수 있다. 생략하면 메서드 파라미터의 예외가 지정된다.
+    - ```
+      @ExceptionHandler
+      public ResponseEntity<ErrorResult> userExHandle(UserException e) {}
+      ```
+- 파라미터와 응답
+  - @ExceptionHandler 에는 마치 스프링의 컨트롤러의 파라미터 응답처럼 다양한 파라미터와 응답을 지정할 수 있다.
+  - 자세한 파라미터와 응답은 다음 공식 메뉴얼을 참고.
+    - https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-annexceptionhandler-args
