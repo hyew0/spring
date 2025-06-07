@@ -340,7 +340,7 @@
     
   - ExceptionHandlerExceptionResolver
     - @ExceptionHandler 을 처리한다. 
-    - API 예외 처리는 대부분 이 기능으로 해결한다. 조금 뒤에 자세히 설명한다.
+    - API 예외 처리는 대부분 이 기능으로 해결한다. 제일 마지막에 설명.
   - ResponseStatusExceptionResolver
     - HTTP 상태 코드를 지정해준다.
   - DefaultHandlerExceptionResolver
@@ -365,3 +365,13 @@
     - (애노테이션을 직접 넣어야 하는데, 내가 코드를 수정할 수 없는 라이브러리의 예외 코드 같은 곳에는 적용할 수 없다.)
   - 추가로 애노테이션을 사용하기 때문에 조건에 따라 동적으로 변경하는 것도 어렵다. 
     - 이때는 ResponseStatusException 예외를 사용하면 된다.
+
+## API 예외 처리 - 스프링이 제공하는 ExceptionResolver2
+- DefaultHandlerExceptionResolver
+  - 스프링 내부에서 발생하는 스프링 예외를 해결한다.
+  - 대표적으로 파라미터 바인딩 시점에 타입이 맞지 않으면 내부에서 TypeMismatchException 이 발생하는데, 
+    - 이 경우 예외가 발생했기 때문에 그냥 두면 서블릿 컨테이너까지 오류가 올라가고, 결과적으로 500 오류가 발생한다.
+    - 그런데 파라미터 바인딩은 대부분 클라이언트가 HTTP 요청 정보를 잘못 호출해서 발생하는 문제이다. 
+    - HTTP 에서는 이런 경우 HTTP 상태 코드 400을 사용하도록 되어 있다.
+    - DefaultHandlerExceptionResolver 는 이것을 500 오류가 아니라 HTTP 상태 코드 400 오류로 변경한다.
+    - 스프링 내부 오류를 어떻게 처리할지 수 많은 내용이 정의되어 있다.
