@@ -158,3 +158,5 @@
   - FormattingConversionService 는 ConversionService 관련 기능을 상속받기 때문에 결과적으로 컨버터도 포맷터도 모두 등록할 수 있다. 
   - 그리고 사용할 때는 ConversionService 가 제공하는 convert 를 사용하면 된다.
   - 추가로 스프링 부트는 DefaultFormattingConversionService 를 상속 받은 WebConversionService 를 내부에서 사용한다.
+
+## 포맷터 적용하기
