@@ -54,3 +54,31 @@
       ```
   - 스프링은 확장 가능한 컨버터 인터페이스를 제공한다.
     - 개발자는 스프링에 추가적인 변환 타입 필요 시 컨버터 인터페이스를 구현해서 등록하면 된다.
+
+## 타입 컨버터 - Converter
+- 타입 컨버터를 사용하려면 org.springframework.core.convert.converter.Converter 인터페이스를 구현하면 된다.
+- 주의
+  - Converter 라는 이름의 인터페이스가 많으니 조심해야 한다.
+  - org.springframework.core.convert.converter.Converter 를 사용해야 한다.
+- 컨버터 인터페이스 
+  - ```java
+    package org.springframework.core.convert.converter;
+    
+    public interface Converter<S, T> {
+      T convert(S source);
+    }
+    ```
+    
+- 롬복의 @EqualsAndHashCode 를 넣으면 모든 필드를 사용해서 equals() , hashcode() 를 생성한다. 
+  - 따라서 모든 필드의 값이 같다면 a.equals(b) 의 결과가 참이 된다.
+
+- 참고
+  - 스프링은 용도에 따라 다양한 방식의 타입 컨버터를 제공한다.
+    - Converter 기본 타입 컨버터
+    - ConverterFactory 전체 클래스 계층 구조가 필요할 때
+    - GenericConverter 정교한 구현, 대상 필드의 애노테이션 정보 사용 가능
+    - ConditionalGenericConverter 특정 조건이 참인 경우에만 실행
+    - 자세한 내용은 공식 문서를 참고하자.
+      - https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#core-convert
+  - 스프링은 문자, 숫자, 불린, Enum등 일반적인 타입에 대한 대부분의 컨버터를 기본으로 제공한다. 
+    - IDE에서 Converter , ConverterFactory , GenericConverter 의 구현체를 찾아보면 수 많은 컨버터를 확인할 수 있다.
