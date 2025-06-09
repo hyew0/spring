@@ -160,3 +160,5 @@
   - 추가로 스프링 부트는 DefaultFormattingConversionService 를 상속 받은 WebConversionService 를 내부에서 사용한다.
 
 ## 포맷터 적용하기
+
+## 스프링이 제공하는 기본 포맷터
