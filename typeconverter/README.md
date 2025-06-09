@@ -82,3 +82,21 @@
       - https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#core-convert
   - 스프링은 문자, 숫자, 불린, Enum등 일반적인 타입에 대한 대부분의 컨버터를 기본으로 제공한다. 
     - IDE에서 Converter , ConverterFactory , GenericConverter 의 구현체를 찾아보면 수 많은 컨버터를 확인할 수 있다.
+
+## 컨버전 서비스 - ConversionService
+- 스프링은 개별 컨버터를 모아두고 그것들을 묶어서 편리하게 사용할 수 있는 기능을 제공한다.
+  - 이것이 바로 컨버전 서비스(ConversionService)이다.
+- ConversionService 인터페이스
+  - ```
+    package org.springframework.core.convert;
+    import org.springframework.lang.Nullable;
+    
+    public interface ConversionService {
+      boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
+      boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+      
+      <T> T convert(@Nullable Object source, Class<T> targetType);
+      Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+    }
+    ```
+  - 컨버전 서비스 인터페이스는 단순히 컨버팅이 가능한가? 확인하는 기능과, 컨버팅 기능을 제공한다.
