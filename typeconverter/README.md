@@ -100,3 +100,8 @@
     }
     ```
   - 컨버전 서비스 인터페이스는 단순히 컨버팅이 가능한가? 확인하는 기능과, 컨버팅 기능을 제공한다.
+
+## 스프링에 Converter 적용하기
+- 스프링은 내부에서 ConversionService 를 제공한다. 
+  - 우리는 WebMvcConfigurer 가 제공하는 addFormatters() 를 사용해서 추가하고 싶은 컨버터를 등록하면 된다. 
+  - 이렇게 하면 스프링은 내부에서 사용하는 ConversionService 에 컨버터를 추가해준다.
