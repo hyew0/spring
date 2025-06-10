@@ -87,3 +87,14 @@
 
 - 서블릿이 제공하는 Part 는 편하기는 하지만, HttpServletRequest 를 사용해야 하고, 추가로 파일 부분만 구분하려면 여러가지 코드를 넣어야 한다. 
   - 이어서 스프링이 이 부분을 얼마나 편리하게 제공하는지 확인한다.
+
+## 스프링과 파일 업로드
+- 스프링은 MultipartFile 이라는 인터페이스로 멀티파트 파일을 매우 편리하게 지원한다.
+
+- @RequestParam MultipartFile file
+  - 업로드하는 HTML Form의 name에 맞추어 @RequestParam 을 적용하면 된다. 
+  - 추가로 @ModelAttribute 에서도 MultipartFile 을 동일하게 사용할 수 있다.
+
+- MultipartFile 주요 메서드
+  - file.getOriginalFilename() : 업로드 파일 명
+  - file.transferTo(...) : 파일 저장
