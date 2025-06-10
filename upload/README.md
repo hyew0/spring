@@ -67,3 +67,23 @@
     - 스프링이 제공하는 기본 멀티파트 리졸버는 MultipartHttpServletRequest 인터페이스를 구현한 StandardMultipartHttpServletRequest 를 반환한다.
       - 이제 컨트롤러에서 HttpServletRequest 대신에 MultipartHttpServletRequest 를 주입받을 수 있는데, 이것을 사용하면 멀티파트와 관련된 여러가지 처리를 편리하게 할 수 있다. 
       - MultipartFile 이라는 것을 사용하는 것이 더 편하기 때문에 MultipartHttpServletRequest 를 잘 사용하지는 않는다.
+
+## 서블릿 파일 업로드2
+- 서블릿이 제공하는 Part에 대해 알아본다.
+
+- 파일을 업로드하려면 실제 파일이 저장되는 경로가 필요하다.
+  - 저장할 경로에 실제 폴더를 만들어둔다.
+  - application.properties
+    - file.dir=파일 업로드 경로 설정(저장하고자 하는 위치)
+    - application.properties 에서 설정할 때 마지막에 / (슬래시)가 포함된 것에 주의하자.
+
+- Part 주요 메서드
+  - part.getSubmittedFileName() 
+    - 클라이언트가 전달한 파일명
+  - part.getInputStream()
+    - Part의 전송 데이터를 읽을 수 있다.
+  - part.write(...)
+    - Part를 통해 전송된 데이터를 저장할 수 있다.
+
+- 서블릿이 제공하는 Part 는 편하기는 하지만, HttpServletRequest 를 사용해야 하고, 추가로 파일 부분만 구분하려면 여러가지 코드를 넣어야 한다. 
+  - 이어서 스프링이 이 부분을 얼마나 편리하게 제공하는지 확인한다.
