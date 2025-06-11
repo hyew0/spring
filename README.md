@@ -13,3 +13,7 @@
 # springMVC2 - 스프링 MVC 활용편
 - 스프링 mvc
 - [4_springMVC2 branch](https://github.com/hyew0/spring/tree/4_springMVC2)
+
+# springDB1
+- 스프링 DB
+- [5_springDB1](https://github.com/hyew0/spring/tree/5_springDB1)
