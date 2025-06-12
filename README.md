@@ -171,3 +171,19 @@
   - PreparedStatement 는 Statement 의 자식 타입인데, ? 를 통한 파라미터 바인딩을 가능하게 해준다.
   - 참고로 SQL Injection 공격을 예방하려면 PreparedStatement 를 통한 파라미터 바인딩 방식을 사용해야 한다.
   - 그냥 PreparedStatement 를 사용하자!
+
+## JDBC 개발 - 조회
+- rs = pstmt.executeQuery() 
+  - 데이터를 변경할 때는 executeUpdate() 를 사용하지만, 데이터를 조회할 때는 executeQuery() 를 사용한다.
+  - executeQuery() 는 결과를 ResultSet 에 담아서 반환한다.
+
+#### ResultSet
+- rs.next()  
+  - 이것을 호출하면 커서가 다음으로 이동한다. 
+  - 참고로 최초의 커서는 데이터를 가리키고 있지 않기 때문에 rs.next() 를 최초 한번은 호출해야 데이터를 조회할 수 있다.
+    - rs.next() 의 결과가 true 면 커서의 이동 결과 데이터가 있다는 뜻이다.
+    - rs.next() 의 결과가 false 면 더이상 커서가 가리키는 데이터가 없다는 뜻이다.
+- rs.getString("member_id") 
+  - 현재 커서가 가리키고 있는 위치의 member_id 데이터를 String 타입으로 반환한다.
+- rs.getInt("money") 
+  - 현재 커서가 가리키고 있는 위치의 money 데이터를 int 타입으로 반환한다.
