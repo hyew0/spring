@@ -138,3 +138,36 @@
         - 따라서 H2 드라이버는 본인이 처리할 수 있으므로 실제 데이터베이스에 연결해서 커넥션을 획득하고 이 커넥션을 클라이언트에 반환한다. 
         - 반면에 URL이 jdbc:h2 로 시작했는데 MySQL 드라이버가 먼저 실행되면 이 경우 본인이 처리할 수 없다는 결과를 반환하게 되고, 다음 드라이버에게 순서가 넘어간다.
     - 이렇게 찾은 커넥션 구현체가 클라이언트에 반환된다.
+
+## JDBC 개발 - 등록
+- con.prepareStatement(sql) 
+  - 데이터베이스에 전달할 SQL과 파라미터로 전달할 데이터들을 준비한다.
+    - sql 
+      - insert into member(member_id, money) values(?, ?)"
+    - pstmt.setString(1, member.getMemberId()) 
+      - SQL의 첫번째 ? 에 값을 지정한다. 문자이므로 setString 을 사용한다.
+    - pstmt.setInt(2, member.getMoney()) 
+      - SQL의 두번째 ? 에 값을 지정한다. Int 형 숫자이므로 setInt 를 지정한다.
+    - pstmt.executeUpdate() 
+      - Statement 를 통해 준비된 SQL을 커넥션을 통해 실제 데이터베이스에 전달한다. 
+      - 참고로 executeUpdate() 은 int 를 반환하는데 영향받은 DB row 수를 반환한다. 
+      - 예시에서는 하나의 row 를 등록했으므로 1을 반환한다.
+
+- 리소스 정리
+  - 쿼리를 실행하고 나면 리소스를 정리해야 한다. 
+  - 여기서는 Connection , PreparedStatement 를 사용했다. 
+  - 리소스를 정리할 때는 항상 역순으로 해야한다. 
+  - Connection 을 먼저 획득하고 Connection 을 통해 PreparedStatement 를 만들었기 때문에 
+    - 리소스를 반환할 때는 PreparedStatement 를 먼저 종료하고, 그 다음에 Connection 을 종료하면 된다. 
+    - 참고로 현재까지 설명하지 않은 ResultSet 은 결과를 조회할 때 사용한다.
+
+  - 주의
+    - 리소스 정리는 꼭! 해주어야 한다. 
+    - 따라서 예외가 발생하든, 하지 않든 항상 수행되어야 하므로 finally 구문에 주의해서 작성해야한다. 
+    - 만약 이 부분을 놓치게 되면 커넥션이 끊어지지 않고 계속 유지되는 문제가 발생할 수 있다. 
+    - 이런 것을 리소스 누수라고 하는데, 결과적으로 커넥션 부족으로 장애가 발생할 수 있다.
+
+- 참고
+  - PreparedStatement 는 Statement 의 자식 타입인데, ? 를 통한 파라미터 바인딩을 가능하게 해준다.
+  - 참고로 SQL Injection 공격을 예방하려면 PreparedStatement 를 통한 파라미터 바인딩 방식을 사용해야 한다.
+  - 그냥 PreparedStatement 를 사용하자!
