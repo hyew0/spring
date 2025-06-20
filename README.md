@@ -274,3 +274,55 @@
   - 쉽게 이야기해서 리포지토리(Repository)는 DataSource 만 의존하고, 이런 속성을 몰라도 된다.
   - 애플리케이션을 개발해보면 보통 설정은 한 곳에서 하지만, 사용은 수 많은 곳에서 하게 된다.
   - 덕분에 객체를 설정하는 부분과, 사용하는 부분을 좀 더 명확하게 분리할 수 있다.
+
+## DataSource - 커넥션 풀
+- HikariConfig
+  - HikariCP 관련 설정을 확인할 수 있다. 
+  - 풀의 이름( MyPool )과 최대 풀 수( 10 )을 확인할 수 있다.
+- MyPool connection adder
+  - 별도의 쓰레드 사용해서 커넥션 풀에 커넥션을 채우고 있는 것을 확인할 수 있다. 
+  - 이 쓰레드는 커넥션 풀에 커넥션을 최대 풀 수( 10 )까지 채운다.
+  - 그렇다면 왜 별도의 쓰레드를 사용해서 커넥션 풀에 커넥션을 채우는 것일까?
+    - 커넥션 풀에 커넥션을 채우는 것은 상대적으로 오래 걸리는 일이다. 
+    - 애플리케이션을 실행할 때 커넥션 풀을 채울 때 까지 마냥 대기하고 있다면 애플리케이션 실행 시간이 늦어진다. 
+    - 따라서 이렇게 별도의 쓰레드를 사용해서 커넥션 풀을 채워야 애플리케이션 실행 시간에 영향을 주지 않는다.
+- 참고
+  - HikariCP 커넥션 풀에 대한 더 자세한 내용은 다음 공식 사이트를 참고하자.
+  - https://github.com/brettwooldridge/HikariCP
+
+#### 스프링 부트 3.1 이상 - 로그 출력 안되는 문제 해결
+- 히카리 커넥션 풀을 테스트하는 dataSourceConnectionPool() 을 실행할 때, 
+  - 스프링 부트 3.1 이상을 사용한다면 전체 로그가 아니라 다음과 같은 간략한 로그만 출력된다.
+  - 스프링 부트 3.1 이상
+  - ```
+    14:14:55.926 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- MyPool -
+    Starting...
+    14:14:55.993 [Test worker] INFO com.zaxxer.hikari.pool.HikariPool -- MyPool -
+    Added connection conn0: url=jdbc:h2:tcp://localhost/~/test user=SA
+    14:14:55.994 [Test worker] INFO com.zaxxer.hikari.HikariDataSource -- MyPool -
+    Start completed.
+    14:14:55.997 [Test worker] INFO hello.jdbc.connection.ConnectionTest --
+    connection=HikariProxyConnection@2066892165 wrapping conn0: url=jdbc:h2:tcp://
+    localhost/~/test user=SA, class=class
+    com.zaxxer.hikari.pool.HikariProxyConnection
+    14:14:56.000 [Test worker] INFO hello.jdbc.connection.ConnectionTest --
+    connection=HikariProxyConnection@276869158 wrapping conn1: url=jdbc:h2:tcp://
+    localhost/~/test user=SA, class=class
+    com.zaxxer.hikari.pool.HikariProxyConnection
+      ```
+  - 이때는 다음 위치에 파일을 만들어서 넣으면 된다.
+    - src/main/resources/logback.xml
+    ```xml
+    <configuration>
+     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+     <encoder>
+     <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp-%msg%n</pattern>
+     </encoder>
+     </appender>
+     <root level="DEBUG">
+     <appender-ref ref="STDOUT" />
+     </root>
+    </configuration>
+    ```
+    - 스프링 부트 3.1 부터 기본 로그 레벨을 INFO 로 빠르게 설정하기 때문에 로그를 확인할 수 없는데, 
+      - 이렇게하면 기본 로그 레벨을 DEBUG 로 설정해서 강의 내용과 같이 로그를 확인할 수 있다.
