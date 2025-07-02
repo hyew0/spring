@@ -1,10 +1,10 @@
-package hello.jdbc;
+package hello.jdbc.repository;
 
+import hello.jdbc.MemberRepositoryV0;
 import hello.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.sql.SQLException;
 import java.util.NoSuchElementException;

@@ -1,7 +1,6 @@
 package hello.jdbc.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import hello.jdbc.MemberRepositoryV2;
+import hello.jdbc.repository.MemberRepositoryV2;
 import hello.jdbc.domain.Member;
 
 import static hello.jdbc.connection.ConnectionConst.*;

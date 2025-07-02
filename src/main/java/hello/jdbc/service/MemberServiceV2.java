@@ -5,8 +5,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import hello.jdbc.MemberRepositoryV1;
-import hello.jdbc.MemberRepositoryV2;
+import hello.jdbc.repository.MemberRepositoryV2;
 import hello.jdbc.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

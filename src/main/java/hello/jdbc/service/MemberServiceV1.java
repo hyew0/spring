@@ -2,7 +2,7 @@ package hello.jdbc.service;
 
 import java.sql.SQLException;
 
-import hello.jdbc.MemberRepositoryV1;
+import hello.jdbc.repository.MemberRepositoryV1;
 import hello.jdbc.domain.Member;
 import lombok.RequiredArgsConstructor;
 

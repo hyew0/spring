@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import hello.jdbc.MemberRepositoryV1;
+import hello.jdbc.repository.MemberRepositoryV1;
 import hello.jdbc.domain.Member;
 
 /**

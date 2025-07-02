@@ -1,4 +1,4 @@
-package hello.jdbc;
+package hello.jdbc.repository;
 
 import static hello.jdbc.connection.ConnectionConst.*;
 import static org.assertj.core.api.Assertions.*;
