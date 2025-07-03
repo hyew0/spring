@@ -755,3 +755,25 @@ public interface PlatformTransactionManager extends TransactionManager {
   - 서비스 로직은 가급적 핵심 비즈니스 로직만 있어야 한다. 
     - 하지만 트랜잭션 기술을 사용하려면 어쩔 수 없이 트랜잭션 코드가 나와야 한다. 
     - 어떻게 하면 이 문제를 해결할 수 있을까?
+
+## 스프링 트랜잭션 - 트랜잭션 AOP 이해
+- 지금까지 트랜잭션을 편리하게 처리하기 위해서 트랜잭션 추상화도 도입하고, 추가로 반복적인 트랜잭션 로직을 해결하기 위해 트랜잭션 템플릿도 도입했다.
+- 트랜잭션 템플릿 덕분에 트랜잭션을 처리하는 반복 코드는 해결할 수 있었다. 
+  - 하지만 서비스 계층에 순수한 비즈니스 로직만 남긴다는 목표는 아직 달성하지 못했다.
+  - 이럴 때 스프링 AOP를 통해 프록시를 도입하면 문제를 깔끔하게 해결할 수 있다.
+- 지금은 @Transactional 을 사용하면 스프링이 AOP를 사용해서 트랜잭션을 편리하게 처리해준다 정도로 이해해도 된다.
+  - aop를 보면 @Aspect , @Advice , @Pointcut 같은 개념이 나오는데,
+    - 이 개념들은 AOP를 이해하는데 필요한 개념이지만, 지금은 트랜잭션을 처리하는데 필요한 개념이 아니므로 넘어가자.
+    - 스프링은 트랜잭션 AOP를 처리하기 위한 모든 기능을 제공한다. 
+    - 스프링 부트를 사용하면 트랜잭션 AOP를 처리하기 위해 필요한 스프링 빈들도 자동으로 등록해준다.
+    - 개발자는 트랜잭션 처리가 필요한 곳에 @Transactional 애노테이션만 붙여주면 된다. 
+      - 스프링의 트랜잭션 AOP는 이 애노테이션을 인식해서 트랜잭션 프록시를 적용해준다.
+  - @Transactional
+    - org.springframework.transaction.annotation.Transactional
+  - 참고
+    - 스프링 AOP를 적용하려면 어드바이저, 포인트컷, 어드바이스가 필요하다. 
+    - 스프링은 트랜잭션 AOP 처리를 위해 다음 클래스를 제공한다. 
+    - 스프링 부트를 사용하면 해당 빈들은 스프링 컨테이너에 자동으로 등록된다.
+      - 어드바이저: BeanFactoryTransactionAttributeSourceAdvisor
+      - 포인트컷: TransactionAttributeSourcePointcut
+      - 어드바이스: TransactionInterceptor
