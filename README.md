@@ -1075,3 +1075,25 @@ public interface PlatformTransactionManager extends TransactionManager {
     - 런타임 예외도 throws 에 선언할 수 있다. 물론 생략해도 된다.
     - 던지는 예외가 명확하고 중요하다면, 코드에 어떤 예외를 던지는지 명시되어 있기 때문에 개발자가 IDE를 통해서 예외를 확인하기가 편리하다.
     - 물론 컨트롤러나 서비스에서 DataAccessException 을 사용하지 않는다면 런타임 예외이기 때문에 무시해도 된다.
+
+## 예외 포함과 스택 트레이스
+- 예외를 전환할 때는 꼭 기존 예외를 포함해야 한다. 
+  - 그렇지 않으면 스택 트레이스를 확인할 때 심각한 문제가 발생한다.
+- ```
+  @Test
+  void printEx() {
+    Controller controller = new Controller();
+    try {
+      controller.request();
+    } catch (Exception e) {
+      //e.printStackTrace();
+      log.info("ex", e);
+    }
+  }
+  ```
+- 로그를 출력할 때 마지막 파라미터에 예외를 넣어주면 로그에 스택 트레이스를 출력할 수 있다.
+  - 예) log.info("message={}", "message", ex) , 여기에서 마지막에 ex 를 전달하는 것을 확인할 수 있다. 
+    - 이렇게 하면 스택 트레이스에 로그를 출력할 수 있다.
+    - 예) log.info("ex", ex) 지금 예에서는 파라미터가 없기 때문에, 예외만 파라미터에 전달하면 스택 트레이스를 로그에 출력할 수 있다.
+  - System.out 에 스택 트레이스를 출력하려면 e.printStackTrace() 를 사용하면 된다.
+    - 실무에서는 항상 로그를 사용해야 한다는 점을 기억하자.
