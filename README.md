@@ -1015,3 +1015,63 @@ public interface PlatformTransactionManager extends TransactionManager {
   - 중간에 중요한 체크 예외가 발생해도 컴파일러는 Exception 을 던지기 때문에 문법에 맞다고 판단해서 컴파일 오류가 발생하지 않는다.
   - 이렇게 하면 모든 예외를 다 던지기 때문에 체크 예외를 의도한 대로 사용하는 것이 아니다. 
   - 따라서 꼭 필요한 경우가 아니면 이렇게 Exception 자체를 밖으로 던지는 것은 좋지 않은 방법이다.
+
+## 언체크 예외 활용
+- 런타임 예외 - 대부분 복구 불가능한 예외
+  - 시스템에서 발생한 예외는 대부분 복구 불가능 예외이다. 
+  - 런타임 예외를 사용하면 서비스나 컨트롤러가 이런 복구 불가능한 예외를 신경쓰지 않아도 된다. 
+  - 물론 이렇게 복구 불가능한 예외는 일관성 있게 공통으로 처리해야 한다.
+- 런타임 예외 - 의존 관계에 대한 문제
+  - 런타임 예외는 해당 객체가 처리할 수 없는 예외는 무시하면 된다. 
+  - 따라서 체크 예외 처럼 예외를 강제로 의존하지 않아도 된다.
+- 런타임 예외를 사용하면 중간에 기술이 변경되어도 해당 예외를 사용하지 않는 컨트롤러, 서비스에서는 코드를 변경하지 않아도 된다.
+  - 구현 기술이 변경되는 경우, 예외를 공통으로 처리하는 곳에서는 예외에 따른 다른 처리가 필요할 수 있다. 
+    - 하지만 공통 처리하는 한곳만 변경하면 되기 때문에 변경의 영향 범위는 최소화 된다.
+
+- 정리
+  - 처음 자바를 설계할 당시에는 체크 예외가 더 나은 선택이라 생각했다. 
+  - 그래서 자바가 기본으로 제공하는 기능들에는 체크 예외가 많다. 
+  - 그런데 시간이 흐르면서 복구 할 수 없는 예외가 너무 많아졌다. 
+  - 특히 라이브러리를 점점 더 많이 사용하면서 처리해야 하는 예외도 더 늘어났다. 
+  - 체크 예외는 해당 라이브러리들이 제공하는 모든 예외를 처리할 수 없을 때마다 throws 에 예외를 덕지덕지 붙어야 했다. 
+  - 그래서 개발자들은 throws Exception 이라는 극단적?인 방법도 자주 사용하게 되었다. 
+  - 물론 이 방법은 사용하면 안된다. 
+  - 모든 예외를 던진다고 선언하는 것인데, 결과적으로 어떤 예외를 잡고 어떤 예외를 던지는지 알 수 없기 때문이다. 
+  - 체크 예외를 사용한다면 잡을 건 잡고 던질 예외는 명확하게 던지도록 선언해야 한다.
+  - 체크 예외의 이런 문제점 때문에 최근 라이브러리들은 대부분 런타임 예외를 기본으로 제공한다. 
+  - JPA 기술도 런타임 예외를 사용한다. 스프링도 대부분 런타임 예외를 제공한다.
+  - 런타임 예외도 필요하면 잡을 수 있기 때문에 필요한 경우에는 잡아서 처리하고, 그렇지 않으면 자연스럽게 던지도록 둔다. 
+  - 그리고 예외를 공통으로 처리하는 부분을 앞에 만들어서 처리하면 된다.
+  - 추가로 런타임 예외는 놓칠 수 있기 때문에 문서화가 중요하다.
+- 런타임 예외는 문서화
+  - 런타임 예외는 문서화를 잘해야 한다.
+  - 또는 코드에 throws 런타임 예외를 남겨서 중요한 예외를 인지할 수 있게 해준다.
+
+- JPA EntityManager
+  - ```java
+    /**
+     * Make an instance managed and persistent.
+     * @param entity entity instance
+     * @throws EntityExistsException if the entity already exists.
+     * @throws IllegalArgumentException if the instance is not an
+     * entity
+     * @throws TransactionRequiredException if there is no transaction when
+     * invoked on a container-managed entity manager of that is of type
+     * <code>PersistenceContextType.TRANSACTION</code>
+     */
+    public void persist(Object entity);
+    ```
+  - 예) 문서에 예외 명시
+- 스프링 JdbcTemplate
+  - ```java
+    /**
+    * Issue a single SQL execute, typically a DDL statement.
+    * @param sql static SQL to execute
+    * @throws DataAccessException if there is any problem
+    */
+    void execute(String sql) throws DataAccessException;
+    ```
+  - 예) method() throws DataAccessException 와 같이 문서화 + 코드에도 명시
+    - 런타임 예외도 throws 에 선언할 수 있다. 물론 생략해도 된다.
+    - 던지는 예외가 명확하고 중요하다면, 코드에 어떤 예외를 던지는지 명시되어 있기 때문에 개발자가 IDE를 통해서 예외를 확인하기가 편리하다.
+    - 물론 컨트롤러나 서비스에서 DataAccessException 을 사용하지 않는다면 런타임 예외이기 때문에 무시해도 된다.
