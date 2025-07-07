@@ -1236,6 +1236,8 @@ public interface PlatformTransactionManager extends TransactionManager {
     - 트랜잭션은 다음도 실행해준다.
       - 트랜잭션을 위한 커넥션 동기화
       - 예외 발생시 스프링 예외 변환기 자동으로 실행.
+  - JdbcTemplate은 커넥션 관리, Statement 준비 및 실행, 결과 매핑, 자원 해제(close), 예외 변환 등 
+    - JDBC 사용 시 반복적으로 필요한 대부분의 상용구 코드를 대신 처리.
 
 #### 정리
 - 서비스 계층의 순수성
