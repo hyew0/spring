@@ -1158,3 +1158,54 @@ public interface PlatformTransactionManager extends TransactionManager {
 - 데이터베이스는 오류 코드를 반환하고, 이 오류 코드를 받은 JDBC 드라이버는 SQLException 을 던진다. 
   - 그리고 SQLException 에는 데이터베이스가 제공하는 errorCode 라는 것이 들어있다.
   - 같은 오류 코드더라도 데이터베이스마다 정의된 오류 코드가 다르기 때문에, 오류 코드를 사용할 때는 데이터베이스 메뉴얼을 확인해야한다.
+
+## 스프링 예외 추상화 
+- 스프링은 데이터 접근 계층에 대한 수십 가지 예외를 정리해서 일관된 예외 계층을 제공한다.
+- 각각의 예외는 특정 기술에 종속적이지 않게 설계되어 있다. 
+  - 서비스 계층에서도 스프링이 제공하는 예외를 사용하면 된다.
+- JDBC나 JPA를 사용할 때 발생하는 예외를 스프링이 제공하는 예외로 변환해주는 역할도 스프링이 제공한다.
+- 예외의 최고 상위는 org.springframework.dao.DataAccessException 이다
+- DataAccessException 은 크게 2가지로 구분하는데 NonTransient 예외와 Transient 예외이다.
+  - Transient 는 일시적이라는 뜻이다. 
+    - Transient 하위 예외는 동일한 SQL을 다시 시도했을 때 성공할 가능성이 있다.
+    - 예시:
+      - 쿼리 타임아웃, 락과 관련된 오류 ...etc
+  - NonTransient 는 일시적이지 않다는 뜻이다. 같은 SQL을 그대로 반복해서 실행하면 실패한다
+    - 예시:
+      - SQL 문법 오류, 데이터베이스 제약조건 위배 ...etc
+  - 스프링 메뉴얼에 모든 예외가 정리되어 있지 않기 때문에 코드를 직접 열어서 확인해야 한다.
+- 스프링은 예외 변환기를 제공한다.
+
+- 스프링은 어떻게 각각의 DB가 제공하는 SQL ErrorCode까지 고려해서 예외를 변환할 수 있을까?
+  - 비밀은 바로 다음 파일에 있다.
+    - sql-error-codes.xml
+      ```xml
+      <bean id="H2" class="org.springframework.jdbc.support.SQLErrorCodes">
+        <property name="badSqlGrammarCodes">
+          <value>42000,42001,42101,42102,42111,42112,42121,42122,42132</value>
+        </property>
+        <property name="duplicateKeyCodes">
+          <value>23001,23505</value>
+        </property>
+      </bean>
+      <bean id="MySQL" class="org.springframework.jdbc.support.SQLErrorCodes">
+        <property name="badSqlGrammarCodes">
+         <value>1054,1064,1146</value>
+        </property>
+        <property name="duplicateKeyCodes">
+          <value>1062</value>
+        </property>
+      </bean>
+      ```
+    - org.springframework.jdbc.support.sql-error-codes.xml
+      - 스프링 SQL 예외 변환기는 SQL ErrorCode를 이 파일에 대입해서 어떤 스프링 데이터 접근 예외로 전환해야 할지 찾아낸다. 
+      - 예를 들어서 H2 데이터베이스에서 42000 이 발생하면 badSqlGrammarCodes 이기 때문에 BadSqlGrammarException 을 반환한다.
+### 정리
+- 스프링은 데이터 접근 계층에 대한 일관된 예외 추상화를 제공한다.
+- 스프링은 예외 변환기를 통해서 SQLException 의 ErrorCode 에 맞는 적절한 스프링 데이터 접근 예외로 변환해준다.
+- 만약 서비스, 컨트롤러 계층에서 예외 처리가 필요하면 특정 기술에 종속적인 SQLException 같은 예외를 직접 사용하는 것이 아니라, 스프링이 제공하는 데이터 접근 예외를 사용하면 된다.
+- 스프링 예외 추상화 덕분에 특정 기술에 종속적이지 않게 되었다. 
+  - 이제 기술이 변경되어도 예외로 인한 변경을 최소화 할 수 있다. 
+  - 향후 JDBC에서 JPA로 구현 기술을 변경하더라도, 스프링은 JPA 예외를 적절한 스프링 데이터 접근 예외로 변환해준다.
+- 물론 스프링이 제공하는 예외를 사용하기 때문에 스프링에 대한 기술 종속성은 발생한다.
+  - 스프링에 대한 기술 종속성까지 완전히 제거하려면 예외를 모두 직접 정의하고 예외 변환도 직접 하면 되지만, 실용적인 방법은 아니다.
