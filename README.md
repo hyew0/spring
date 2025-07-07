@@ -1153,3 +1153,8 @@ public interface PlatformTransactionManager extends TransactionManager {
   - 리포지토리에서 넘어오는 특정한 예외의 경우 복구를 시도할 수도 있다. 
   - 그런데 지금 방식은 항상 MyDbException 이라는 예외만 넘어오기 때문에 예외를 구분할 수 없는 단점이 있다. 
   - 만약 특정 상황에는 예외를 잡아서 복구하고 싶으면 예외를 어떻게 구분해서 처리할 수 있을까?
+
+## 데이터 접근 예외 
+- 데이터베이스는 오류 코드를 반환하고, 이 오류 코드를 받은 JDBC 드라이버는 SQLException 을 던진다. 
+  - 그리고 SQLException 에는 데이터베이스가 제공하는 errorCode 라는 것이 들어있다.
+  - 같은 오류 코드더라도 데이터베이스마다 정의된 오류 코드가 다르기 때문에, 오류 코드를 사용할 때는 데이터베이스 메뉴얼을 확인해야한다.
