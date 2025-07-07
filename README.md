@@ -1097,3 +1097,36 @@ public interface PlatformTransactionManager extends TransactionManager {
     - 예) log.info("ex", ex) 지금 예에서는 파라미터가 없기 때문에, 예외만 파라미터에 전달하면 스택 트레이스를 로그에 출력할 수 있다.
   - System.out 에 스택 트레이스를 출력하려면 e.printStackTrace() 를 사용하면 된다.
     - 실무에서는 항상 로그를 사용해야 한다는 점을 기억하자.
+
+# 6. 스프링과 문제 해결 - 예외 처리, 반복
+## 체크 예외와 인터페이스
+- 서비스 계층은 순수하게 유지하는 것이 좋고, 이렇게 하려면 예외에 대한 의존도 함께 해결해야한다.
+- 예를 들어서 서비스가 처리할 수 없는 SQLException 에 대한 의존을 제거하려면 어떻게 해야할까?
+  - 서비스가 처리할 수 없으므로 리포지토리가 던지는 SQLException 체크 예외를 런타임 예외로 전환해서 서비스 계층에 던지자. 
+  - 이렇게 하면 서비스 계층이 해당 예외를 무시할 수 있기 때문에, 특정 구현 기술에 의존하는 부분을 제거하고 서비스 계층을 순수하게 유지할 수 있다.
+- 체크 예외 코드에 인터페이스 도입시 문제점 - 인터페이스
+  - ```java
+    package hello.jdbc.repository;
+    import hello.jdbc.domain.Member;
+    import java.sql.SQLException;
+    public interface MemberRepositoryEx {
+      Member save(Member member) throws SQLException;
+      Member findById(String memberId) throws SQLException;
+      void update(String memberId, int money) throws SQLException;
+      void delete(String memberId) throws SQLException;
+    }
+    ```
+  - 인터페이스의 메서드에 throws SQLException 이 있는 것을 확인할 수 있다.
+  - 이렇게 되면 인터페이스 도입된 구현클래스에서도 throws SQLException 을 선언해야 한다.
+    - 따라서 인터페이스를 도입해도 결국 서비스 계층에서 SQLException 을 처리해야 하는 문제가 발생한다.
+  - 참고로 구현 클래스의 메서드에 선언할 수 있는 예외는 부모 타입에서 던진 예외와 같거나 하위 타입이어야 한다.
+    - 예를 들어서 인터페이스 메서드에 throws Exception 를 선언하면, 구현 클래스 메서드에 throws SQLException 는 가능하다. 
+    - SQLException 은 Exception 의 하위 타입이기 때문이다.
+  - 이렇게 되면 특정 구현 기술에 종속적인 체크 예외를 사용하게 된다.
+    - 이렇게 되면 순수한 인터페이스가 아니다.
+    - 인터페이스를 만드는 목적은 구현체를 쉽게 변경하기 위함인데, 이미 인터페이스가 특정 구현 기술에 오염이 되어 버렸다. 
+      - 향후 JDBC가 아닌 다른 기술로 변경한다면 인터페이스 자체를 변경해야 한다.
+- 런타임 예외와 인터페이스
+  - 런타임 예외는 이런 부분에서 자유롭다. 
+  - 인터페이스에 런타임 예외를 따로 선언하지 않아도 된다. 
+  - 따라서 인터페이스가 특정 기술에 종속적일 필요가 없다.
