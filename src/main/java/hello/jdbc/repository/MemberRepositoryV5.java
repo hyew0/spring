@@ -40,7 +40,7 @@ public class MemberRepositoryV5 implements MemberRepository {
 	@Override
 	public Member findById(String memberId)  {
 		String sql = "select * from member where member_id = ?";
-		return template.queryForObject((sql, memberRowMapper(), memberId));
+		return template.queryForObject(sql, memberRowMapper(), memberId);
 	}
 
 	@Override
