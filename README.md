@@ -1175,7 +1175,7 @@ public interface PlatformTransactionManager extends TransactionManager {
       - SQL 문법 오류, 데이터베이스 제약조건 위배 ...etc
   - 스프링 메뉴얼에 모든 예외가 정리되어 있지 않기 때문에 코드를 직접 열어서 확인해야 한다.
 - 스프링은 예외 변환기를 제공한다.
-
+  - translate() 메서드의 첫번째 파라미터는 읽을 수 있는 설명이고, 두번째는 실행한 sql, 마지막은 발생된 SQLException 을 전달
 - 스프링은 어떻게 각각의 DB가 제공하는 SQL ErrorCode까지 고려해서 예외를 변환할 수 있을까?
   - 비밀은 바로 다음 파일에 있다.
     - sql-error-codes.xml
@@ -1203,9 +1203,14 @@ public interface PlatformTransactionManager extends TransactionManager {
 ### 정리
 - 스프링은 데이터 접근 계층에 대한 일관된 예외 추상화를 제공한다.
 - 스프링은 예외 변환기를 통해서 SQLException 의 ErrorCode 에 맞는 적절한 스프링 데이터 접근 예외로 변환해준다.
-- 만약 서비스, 컨트롤러 계층에서 예외 처리가 필요하면 특정 기술에 종속적인 SQLException 같은 예외를 직접 사용하는 것이 아니라, 스프링이 제공하는 데이터 접근 예외를 사용하면 된다.
+- 만약 서비스, 컨트롤러 계층에서 예외 처리가 필요하면 
+  - 특정 기술에 종속적인 SQLException 같은 예외를 직접 사용하는 것이 아니라, 스프링이 제공하는 데이터 접근 예외를 사용하면 된다.
 - 스프링 예외 추상화 덕분에 특정 기술에 종속적이지 않게 되었다. 
   - 이제 기술이 변경되어도 예외로 인한 변경을 최소화 할 수 있다. 
   - 향후 JDBC에서 JPA로 구현 기술을 변경하더라도, 스프링은 JPA 예외를 적절한 스프링 데이터 접근 예외로 변환해준다.
 - 물론 스프링이 제공하는 예외를 사용하기 때문에 스프링에 대한 기술 종속성은 발생한다.
   - 스프링에 대한 기술 종속성까지 완전히 제거하려면 예외를 모두 직접 정의하고 예외 변환도 직접 하면 되지만, 실용적인 방법은 아니다.
+
+## 스프링 예외 추상화 적용
+- translate() 메서드의 첫번째 파라미터는 읽을 수 있는 설명이고, 두번째는 실행한 sql, 마지막은 발생된 SQLException 을 전달.
+  - throw exTranslator.translate("findById", sql, e);
