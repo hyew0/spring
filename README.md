@@ -18,3 +18,8 @@
 - 스프링 DB
 - JDBC/ 커넥션풀&데이터소스/ 트랜잭션/ 예외처리/ JdbcTemplate
 - [5_springDB1](https://github.com/hyew0/spring/tree/5_springDB1)
+
+# springDB2
+- 스프링 DB
+- 
+- [6 springDB2](https://github.com/hyew0/spring/tree/6_springDB2)
