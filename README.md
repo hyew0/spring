@@ -22,4 +22,4 @@
 # springDB2 - 데이터 접근 활용
 - 스프링 DB
 - 
-- [6 springDB2](https://github.com/hyew0/spring/tree/6_springDB2)
+- [6_springDB2](https://github.com/hyew0/spring/tree/6_springDB2)
