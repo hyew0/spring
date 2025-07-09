@@ -14,12 +14,12 @@
 - 스프링 mvc
 - [4_springMVC2 branch](https://github.com/hyew0/spring/tree/4_springMVC2)
 
-# springDB1
+# springDB1 - 데이터 접근 기본
 - 스프링 DB
 - JDBC/ 커넥션풀&데이터소스/ 트랜잭션/ 예외처리/ JdbcTemplate
 - [5_springDB1](https://github.com/hyew0/spring/tree/5_springDB1)
 
-# springDB2
+# springDB2 - 데이터 접근 활용
 - 스프링 DB
 - 
 - [6 springDB2](https://github.com/hyew0/spring/tree/6_springDB2)
