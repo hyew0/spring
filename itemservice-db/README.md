@@ -200,3 +200,50 @@
     - 참고로 JPA는 모든 엔티티에 일관된 방식으로 대리 키 사용을 권장한다
     - 비즈니스 요구사항은 계속해서 변하는데 테이블은 한 번 정의하면 변경하기 어렵다.
     - 그런면에서 외부 풍파에 쉽게 흔들리지 않는 대리 키가 일반적으로 좋은 선택이라 생각한다. 
+
+# 2. 스프링 JdbcTemplate
+## JdbcTemplate 기본
+- SQL을 직접 사용하는 경우에 스프링이 제공하는 JdbcTemplate 은 아주 좋은 선택지이다.
+  - JdbcTemplate 은 JDBC를 편리하게 사용할 수 있게 도와주는 스프링의 기술이다.
+  - 장점
+    - 설정의 편리함
+      - JdbcTemplate 은 spring-jdbc 라이브러리에 포함되어 있는데, 이 라이브러리는 스프링으로 JDBC를 사용할 때 기본으로 사용되는 라이브러리이다.
+      - 그리고 별도의 복잡한 설정 없이 바로 사용 가능하다.
+    - 반복 문제 해결
+      - JdbcTemplate은 템플릿 콜백 패턴을 사용해서, JDBC를 직접 사용할 때 발생하는 대부분의 반복 작업을 대신 처리해준다.
+      - 개발자는 SQL을 작성하고, 전달할 파리미터를 정의하고, 응답 값을 매핑하기만 하면 된다.
+      - 우리가 생각할 수 있는 대부분의 반복 작업을 대신 처리해준다.
+        - 커넥션 획득
+        - statement 를 준비하고 실행
+        - 결과를 반복하도록 루프를 실행
+        - 커넥션 종료, statement , resultset 종료
+        - 트랜잭션 다루기 위한 커넥션 동기화
+        - 예외 발생시 스프링 예외 변환기 실행
+  - 단점
+    - 동적 SQL을 해결하기 어렵다.
+### JdbcTemplate 설정
+- build.gradle
+    ```groovy
+     dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        
+        //JdbcTemplate 추가
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+        //H2 데이터베이스 추가
+        runtimeOnly 'com.h2database:h2'
+     
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+     
+        //테스트에서 lombok 사용
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+     }
+  ```
+  - org.springframework.boot:spring-boot-starter-jdbc 를 추가하면 JdbcTemplate이 들어있는 spring-jdbc 가 라이브러리에 포함된다.
+    - 여기서는 H2 데이터베이스에 접속해야 하기 때문에 H2 데이터베이스의 클라이언트 라이브러리(Jdbc Driver)도 추가하자.
+    - runtimeOnly 'com.h2database:h2'
+  - JdbcTemplate은 spring-jdbc 라이브러리만 추가하면 된다. 
+    - 별도의 추가 설정 과정은 없다.
