@@ -265,3 +265,89 @@
     #jdbcTemplate sql log
     logging.level.org.springframework.jdbc=debug
     ```
+    
+## JdbcTemplate - 이름 지정 파라미터
+- JdbcTemplate을 기본으로 사용 시 파라미터를 순서대로 바인딩한다.
+  - 따라서 순서만 잘 지키면 문제가 발생하지 않는다. 그러나 문제는 변경 시점에 발생한다.
+  - 순서를 변경하여 코드를 작성했다고 가정했을 때, 순서를 변경하면 데이터가 잘못 바인딩될 수 있다.
+  - 실무에서는 파라미터가 수십개가 되기 때문에 미래에 필드를 추가하거나, 수정하면서 이런 문제가 발생할 수 있다.
+    - 버그 중에서 가장 고치기 힘든 버그가 데이터베이스에 데이터가 잘못 들어가는 버그다. 
+    - 이렇게 잘못된 데이터가 들어가면, 코드만 고치는게 아니라 데이터베이스의 데이터를 복구해야 해서 버그를 해결하기 위해 들어가는 리소스가 많다.
+> 개발할 때는 코드를 몇줄 줄이는 편리함도 중요하지만, 모호함을 제거해서 코드를 명확하게 만드는 것이 유지보수 관점에서 매우 중요하다.
+> 이런 문제를 해결하기 위해 JdbcTemplate은 이런 문제를 보완하기 위해 "NamedParameterJdbcTemplate" 이라는 이름을 지정해서 파라미터를 바인딩 하는 기능을 제공한다.
+
+### 이름 지정 파라미터
+- 파라미터를 전달하려면 Map 처럼 key , value 데이터 구조를 만들어서 전달해야 한다.
+  - 여기서 key 는 :파라미터이름 으로 지정한, 파라미터의 이름이고 , value 는 해당 파라미터의 값이 된다.
+- 다음 코드를 보면 이렇게 만든 파라미터( param )를 전달하는 것을 확인할 수 있다.
+  - template.update(sql, param, keyHolder);
+  - 이름 지정 바인딩에서 자주 사용하는 파라미터의 종류는 크게 3가지가 있다.
+    - Map
+    - SqlParameterSource
+      - MapSqlParameterSource
+      - BeanPropertySqlParameterSource
+  - 1.Map
+    - findById() 코드에서 확인할 수 있다. 
+    - ```java
+      Map<String, Object> param = Map.of("id", id);
+      Item item = template.queryForObject(sql, param, itemRowMapper());
+     ```
+  - 2.MapSqlParameterSource
+    - Map 과 유사한데, SQL 타입을 지정할 수 있는 등 SQL에 좀 더 특화된 기능을 제공.
+    - SqlParameterSource 인터페이스의 구현체이다.
+    - MapSqlParameterSource 는 메서드 체인을 통해 편리한 사용법도 제공한다.
+    - updatae() 코드에서 확인할 수 있다.
+      - ```
+        SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("itemName", updateParam.getItemName())
+        .addValue("price", updateParam.getPrice())
+        .addValue("quantity", updateParam.getQuantity())
+        .addValue("id", itemId); //이 부분이 별도로 필요하다.
+        template.update(sql, param);
+        ```
+  - 3.BeanPropertySqlParameterSource
+    - 자바빈 프로퍼티 규약을 통해서 자동으로 파라미터 객체를 생성.
+      - 예) ( getXxx() -> xxx, getItemName() -> itemName )
+      - 예를 들어서 getItemName() , getPrice() 가 있으면 다음과 같은 데이터를 자동으로 만들어낸다.
+        - key=itemName, value=상품명 값
+        - key=price, value=가격 값
+    - SqlParameterSource 인터페이스의 구현체이다.
+    - save() , findAll() 코드에서 확인할 수 있다. 
+      - ```java
+        SqlParameterSource param = new BeanPropertySqlParameterSource(item);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        template.update(sql, param, keyHolder);
+        ```
+    - BeanPropertySqlParameterSource 가 많은 것을 자동화 해주기 때문에 가장 좋아보이지만,
+      - BeanPropertySqlParameterSource 를 항상 사용할 수 있는 것은 아니다.
+      - 예를 들어서 update() 에서는 SQL에 :id 를 바인딩 해야 하는데, 
+      - update() 에서 사용하는 ItemUpdateDto 에는 itemId 가 없다. 
+      - 따라서 BeanPropertySqlParameterSource 를 사용할 수 없고, 대신에 MapSqlParameterSource 를 사용했다.
+- BeanPropertyRowMapper
+  - ```
+    private RowMapper<Item> itemRowMapper() {
+        return BeanPropertyRowMapper.newInstance(Item.class); //camel 변환 지원
+    }
+    ```
+    - BeanPropertyRowMapper 는 ResultSet 의 결과를 받아서 자바빈 규약에 맞추어 데이터를 변환한다.
+      - 예를 들어서 데이터베이스에서 조회한 결과가 select id, price 라고 하면 다음과 같은 코드를 작성해준다. (실제로는 리플렉션 같은 기능을 사용한다.) 
+      - ```java
+        Item item = new Item();
+        item.setId(rs.getLong("id"));
+        item.setPrice(rs.getInt("price")); 
+        ```
+      - 데이터베이스에서 조회한 결과 이름을 기반으로 setId() , setPrice() 처럼 자바빈 프로퍼티 규약에 맞춘 메서드를 호출하는 것이다.
+  - 별칭
+    - select item_name 의 경우 setItem_name() 이라는 메서드가 없기 때문에 골치가 아프다.
+      - 이런 경우 개발자가 조회 SQL을 다음과 같이 고치면 된다.
+        - select item_name as itemName
+    - 별칭 as를 사용해서 SQL 조회 결과의 이름을 변경하는 것이다.
+      - 예를 들어서 데이터베이스에는 member_name 이라고 되어 있는데 객체에 username 이라고 되어 있다면 다음과 같이 해결할 수 있다.
+        - select member_name as username
+        - member_name -> username 으로 변경한 것.
+  - 관례의 불일치
+    - 자바 객체는 카멜(camelCase) 표기법을 사용하고, 데이터베이스는 snake_case 표기법(언더스코어를 사용한 표기법)을 사용한다.
+    - 이렇게 데이터베이스 컬럼 이름과 객체의 이름이 다를 때 별칭(as)을 사용해서 문제를 많이 해결한다.
+    - 이 부분을 관례로 많이 사용하다 보니 BeanPropertyRowMapper 는 언더스코어 표기법을 카멜로 자동 변환해준다.
+      - 따라서 select item_name 으로 조회해도 setItemName() 에 문제 없이 값이 들어간다.
+      - 정리하면 snake_case 는 자동으로 해결되니 그냥 두면 되고, 컬럼 이름과 객체 이름이 완전히 다른 경우에는 조회 SQL에서 별칭을 사용하면 된다.
