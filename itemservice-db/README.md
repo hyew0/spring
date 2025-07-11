@@ -473,3 +473,28 @@
     - ```java
       jdbcTemplate.update( "call SUPPORT.REFRESH_ACTORS_SUMMARY(?)", Long.valueOf(unionId));
       ```
+      
+
+# 3. 테스트
+- 데이터베이스에 연동하는 테스트에 대해서 알아보자.
+
+#### @SpringBootTest 
+- @SpringBootTest 는 @SpringBootApplication 를 찾아서 설정으로 사용한다.
+
+## 테스트 - 데이터베이스 분리
+- 로컬에서 사용하는 애플리케이션 서버와 테스트에서 같은 데이터베이스를 사용하고 있으니 테스트에서 문제가 발생한다.
+  - 이런 문제를 해결하려면 테스트를 다른 환경과 철저하게 분리해야 한다.
+- 가장 간단한 방법은 테스트 전용 데이터베이스를 별도로 운영하는 것이다.
+  - H2 데이터베이스를 용도에 따라 2가지로 구분하면 된다.
+    - jdbc:h2:tcp://localhost/~/test local에서 접근하는 서버 전용 데이터베이스
+    - jdbc:h2:tcp://localhost/~/testcase test 케이스에서 사용하는 전용 데이터베이스
+  - 데이터베이스 파일 생성 방법
+    - 데이터베이스 서버를 종료하고 다시 실행한다.
+    - 사용자명은 sa 입력
+    - JDBC URL에 다음 입력,
+    - jdbc:h2:~/testcase (최초 한번)
+    - ~/testcase.mv.db 파일 생성 확인
+      - 이후부터는 jdbc:h2:tcp://localhost/~/testcase 이렇게 접속
+- 테스트에서 매우 중요한 원칙은 다음과 같다.
+  - 테스트는 다른 테스트와 격리해야 한다.
+  - 테스트는 반복해서 실행할 수 있어야 한다

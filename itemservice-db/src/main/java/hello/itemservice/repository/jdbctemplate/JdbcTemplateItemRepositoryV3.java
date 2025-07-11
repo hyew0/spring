@@ -39,7 +39,7 @@ public class JdbcTemplateItemRepositoryV3 implements ItemRepository {
 		this.template = new NamedParameterJdbcTemplate(dataSource);
 		this.jdbcInsert = new SimpleJdbcInsert(dataSource)
 			.withTableName("item")
-			.usingGeneratedKeyColumns("id")
+			.usingGeneratedKeyColumns("id");
 			// .usingColumns("item_name", "price", "quantity"); //생략 가능
 	}
 
@@ -58,7 +58,7 @@ public class JdbcTemplateItemRepositoryV3 implements ItemRepository {
 			" where id=:id";
 
 		SqlParameterSource param = new MapSqlParameterSource()
-			.addValue("itemNae", updateParam.getItemName())
+			.addValue("itemName", updateParam.getItemName())
 			.addValue("price", updateParam.getPrice())
 			.addValue("quantity", updateParam.getQuantity())
 			.addValue("id", itemId);
