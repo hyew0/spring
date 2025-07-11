@@ -351,3 +351,22 @@
     - 이 부분을 관례로 많이 사용하다 보니 BeanPropertyRowMapper 는 언더스코어 표기법을 카멜로 자동 변환해준다.
       - 따라서 select item_name 으로 조회해도 setItemName() 에 문제 없이 값이 들어간다.
       - 정리하면 snake_case 는 자동으로 해결되니 그냥 두면 되고, 컬럼 이름과 객체 이름이 완전히 다른 경우에는 조회 SQL에서 별칭을 사용하면 된다.
+## JdbcTemplate - SimpleJdbcInsert
+- JdbcTemplate은 INSERT SQL를 직접 작성하지 않아도 되도록 SimpleJdbcInsert 라는 편리한 기능을 제공한다.
+- SimpleJdbcInsert
+  - ```java
+    this.jdbcInsert = new SimpleJdbcInsert(dataSource)
+    .withTableName("item")
+    .usingGeneratedKeyColumns("id");
+    // .usingColumns("item_name", "price", "quantity"); //생략 가능
+    ```
+    - withTableName : 
+      - 데이터를 저장할 테이블 명을 지정한다.
+    - usingGeneratedKeyColumns : 
+      - key 를 생성하는 PK 컬럼 명을 지정한다.
+    - usingColumns : 
+      - INSERT SQL에 사용할 컬럼을 지정한다. 
+      - 특정 값만 저장하고 싶을 때 사용한다. 
+      - 생략할 수 있다.
+        - SimpleJdbcInsert 는 생성 시점에 데이터베이스 테이블의 메타 데이터를 조회한다. 
+        - 따라서 어떤 컬럼이 있는지 확인 할 수 있으므로 usingColumns 을 생략할 수 있다. 
