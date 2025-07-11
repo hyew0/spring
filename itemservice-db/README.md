@@ -247,3 +247,21 @@
     - runtimeOnly 'com.h2database:h2'
   - JdbcTemplate은 spring-jdbc 라이브러리만 추가하면 된다. 
     - 별도의 추가 설정 과정은 없다.
+
+## 동적 쿼리 문제 
+- 검색을 하려고 할 때, 검색하는 값에 따라서 실행하는 SQL이 동적으로 달라져야 한다.
+    - 예
+      - 검색 조건 x
+      - 상품명으로 검색
+      - 최대가격으로 검색
+      - 상품명, 최대 가격으로 둘 다 검색
+    - 다음의 경우와 같이 상황에 따라 SQL을 동적으로 생성해야 한다.
+      - 그리고 각 상황에 맞추어 파라미터도 생성해야 한다.
+      - 이후에 사용할 MyBatis의 가장 큰 장점이 SQL을 직접 사용할 때 동적 쿼리를 쉽게 작성할 수 있다는 것임.
+- 로그 추가
+  - JdbcTemplate이 실행하는 SQL 로그를 확인하려면 application.properties에 아래의 설정을 추가하면 된다.
+  - main, test 설정이 분리되어 있기 때문에 둘 다 확인하려면 두 곳 모두에 추가해야 한다.
+  - ```properties
+    #jdbcTemplate sql log
+    logging.level.org.springframework.jdbc=debug
+    ```
