@@ -121,8 +121,8 @@
 - main 프로필
     - /src/main/resources 하위의 application.properties
     - ```properties
-    spring.profiles.active=local 
-    ```
+      spring.profiles.active=local 
+      ```
         - 이 위치의 application.properties 는 /src/main 하위의 자바 객체를 실행할 때 (주로 main() ) 동작하는 스프링 설정이다.
         - spring.profiles.active=local 이라고 하면 스프링은 local 이라는 프로필로 동작한다.
         - 따라서 직전에 설명한 @Profile("local") 가 동작하고, testDataInit 가 스프링 빈으로 등록 된다.
