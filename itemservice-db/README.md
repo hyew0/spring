@@ -568,3 +568,31 @@
 > 참고
 > SQL 스크립트를 사용해서 데이터베이스를 초기화하는 자세한 방법은 다음 스프링 부트 공식 메뉴얼을 참고하자.
 > https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.datainitialization.using-basic-sql-scripts
+
+## 테스트 - 스프링 부트와 임베디드 모드
+- 스프링 부트는 개발자에게 정말 많은 편리함을 제공하는데, 임베디드 데이터베이스에 대한 설정도 기본으로 제공한다.
+  - 스프링 부트는 데이터베이스에 대한 별다른 설정이 없으면 임베디드 데이터베이스를 사용한다.
+- 따라서 별다른 정보가 없으면 스프링 부트는 임베디드 모드로 접근하는 데이터소스( DataSource )를 만들어서 제공한다.
+  - 따로 작성해줄 필요 없이 사용 가능하다. 
+- 주의!
+  - 테스트는 test/resources 폴더에 있는 application.properties 파일을 수정해야 한다.
+
+- jdbc:h2:mem 뒤에 임의의 데이터베이스 이름이 들어가 있다. 
+  - 이것은 혹시라도 여러 데이터소스가 사용될 때 같은 데이터베이스를 사용하면서 발생하는 충돌을 방지하기 위해 스프링 부트가 임의의 이름을 부여한 것이다.
+    - conn0: url=jdbc:h2:mem:d8fb3a29-caf7-4b37-9b6c-b0eed9985454
+  - 임베디드 데이터베이스 이름을 스프링 부트가 기본으로 제공하는 jdbc:h2:mem:testdb 로 고정하고 싶으면 application.properties 에 다음 설정을 추가하면 된다. 
+  - ```properties
+    spring.datasource.generate-unique-name=false 
+    ```
+>참고
+> 임베디드 데이터베이스에 대한 스프링 부트의 더 자세한 설정은 다음 공식 메뉴얼을 참고하자.
+> https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.datasource.embedded
+
+- 스프링 부트 3.x 로깅 변경 사항
+  - org.springframework.test.context.transaction.TransactionContext 에서 남기는 로깅이 
+    - INFO -> TRACE 로 변경되었다. 
+    - 참고로 핵심 정보만 출력하려면 DEBUG 를 사용해도 된다.
+  - application.properties
+  - ```
+    logging.level.org.springframework.test.context.transaction=trace
+    ```
