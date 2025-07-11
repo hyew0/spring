@@ -370,3 +370,25 @@
       - 생략할 수 있다.
         - SimpleJdbcInsert 는 생성 시점에 데이터베이스 테이블의 메타 데이터를 조회한다. 
         - 따라서 어떤 컬럼이 있는지 확인 할 수 있으므로 usingColumns 을 생략할 수 있다. 
+
+## JdbcTemplate 기능 정리
+- 주요 기능
+  - JdbcTemplate이 제공하는 주요 기능은 다음과 같다.
+    - JdbcTemplate
+      - 순서 기반 파라미터 바인딩을 지원한다.
+    - NamedParameterJdbcTemplate
+      - 이름 기반 파라미터 바인딩을 지원한다. (권장)
+    - SimpleJdbcInsert
+      - INSERT SQL을 편리하게 사용할 수 있다.
+    - SimpleJdbcCall
+      - 스토어드 프로시저를 편리하게 호출할 수 있다.
+>- 참고
+>  - 스토어드 프로시저를 사용하기 위한 SimpleJdbcCall 에 대한 자세한 내용은 다음 스프링 공식 메뉴얼을 참고.
+>    - https://docs.spring.io/spring-framework/docs/current/reference/html/data-access.html#jdbcsimple-jdbc-call-1
+
+- JdbcTemplate 사용법 정리
+  - JdbcTemplate에 대한 사용법은 스프링 공식 메뉴얼에 자세히 소개되어 있다. 
+  - 여기서는 스프링 공식 메뉴얼이 제공하는 예제를 통해 JdbcTemplate의 기능을 간단히 정리해보자.
+>  - 참고
+>    - 스프링 JdbcTemplate 사용 방법 공식 메뉴얼
+>    - https://docs.spring.io/spring-framework/docs/current/reference/html/data-access.html#jdbcJdbcTemplate
