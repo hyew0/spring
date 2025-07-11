@@ -166,12 +166,12 @@
 - 테이블을 생성했으면, 잘 동작하는지 다음 SQL을 실행하고 조회해보자.
 - 등록 쿼리
     - ```sql
-    insert into item(item_name, price, quantity) values ('ItemTest', 10000, 10) 
-    ```
+      insert into item(item_name, price, quantity) values ('ItemTest', 10000, 10) 
+      ```
 - 조회 쿼리
     - ```sql
-    select * from item; 
-    ```
+      select * from item; 
+      ```
 - 실행하면 데이터베이스가 생성한 id 값을 포함해서 등록한 데이터가 잘 저장되어 있는 것을 확인할 수 있다.
 
 #### 참고 - 권장하는 식별자 선택 전략
@@ -291,7 +291,7 @@
     - ```java
       Map<String, Object> param = Map.of("id", id);
       Item item = template.queryForObject(sql, param, itemRowMapper());
-     ```
+      ```
   - 2.MapSqlParameterSource
     - Map 과 유사한데, SQL 타입을 지정할 수 있는 등 SQL에 좀 더 특화된 기능을 제공.
     - SqlParameterSource 인터페이스의 구현체이다.
