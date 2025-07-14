@@ -722,3 +722,47 @@
 ### select SQL
 - select SQL은 <select> 를 사용하면 된다. 
 - 
+- select SQL은 <select> 를 사용하면 된다.
+- resultType 은 반환 타입을 명시하면 된다.
+    - application.properties 에 mybatis.type-aliasespackage=hello.itemservice.domain 속성을 지정한 덕분에 모든 패키지 명을 다 적지는 않아도 된다. 
+    - 그렇지 않으면 모든 패키지 명을 다 적어야 한다.
+  - JdbcTemplate의 BeanPropertyRowMapper 처럼 SELECT SQL의 결과를 편리하게 객체로 바로 변환해준다.
+- 자바 코드에서 반환 객체가 하나이면 Item , Optional<Item> 과 같이 사용하면 되고, 반환 객체가 하나 이상이면 컬렉션을 사용하면 된다. 
+  - 주로 List 를 사용한다.
+
+- Mybatis는 <where> , <if> 같은 동적 쿼리 문법을 통해 편리한 동적 쿼리를 지원한다.
+  - <if>는 해당 조건이 만족하면 구문을 추가한다.
+  - <where>은 적절하게 where 문장을 만들어준다.
+    - 예제에서 <if> 가 모두 실패하게 되면 SQL where 를 만들지 않는다.
+    - 예제에서 <if> 가 하나라도 성공하면 처음 나타나는 and 를 where 로 변환해준다.
+
+- XML에서는 데이터 영역에 < , > 같은 특수 문자를 사용할 수 없다. 
+  - 이유는 간단한데, XML에서 TAG가 시작하거나 종료할 때 < , > 와 같은 특수문자를 사용하기 때문이다. 
+    - ```
+      < : &lt;
+      > : &gt;
+      & : &amp;
+      ```
+    - 다른 해결 방안으로는 XML에서 지원하는 CDATA 구문 문법을 사용하는 것이다. 
+      - 이 구문 안에서는 특수문자를 사용할 수 있다. 
+      - 대신 이 구문 안에서는 XML TAG가 단순 문자로 인식되기 때문에 <if> , <where> 등이 적용되지 않는다.
+  - XML CDATA 사용 
+    - ```xml
+      <select id="findAll" resultType="Item">
+        select id, item_name, price, quantity
+        from item
+        <where>
+          <if test="itemName != null and itemName != ''">
+            and item_name like concat('%',#{itemName},'%')
+          </if>
+          <if test="maxPrice != null">
+            <![CDATA[
+              and price <= #{maxPrice}
+            ]]>
+          </if>
+        </where> 
+      </select> 
+      ```
+    - 특수문자와 CDATA 각각 상황에 따른 장단점이 있으므로 원하는 방법을 그때그때 선택하면 된다.
+
+## MyBatis 적용 - 설정과 실행
