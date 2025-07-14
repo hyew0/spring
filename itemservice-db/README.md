@@ -722,7 +722,7 @@
 ### select SQL
 - select SQL은 <select> 를 사용하면 된다.
 - resultType 은 반환 타입을 명시하면 된다.
-  - application.properties 에 mybatis.type-aliasespackage=hello.itemservice.domain 속성을 지정한 덕분에 모든 패키지 명을 다 적지는 않아도 된다. 
+    - application.properties 에 mybatis.type-aliasespackage=hello.itemservice.domain 속성을 지정한 덕분에 모든 패키지 명을 다 적지는 않아도 된다. 
     - 그렇지 않으면 모든 패키지 명을 다 적어야 한다.
   - JdbcTemplate의 BeanPropertyRowMapper 처럼 SELECT SQL의 결과를 편리하게 객체로 바로 변환해준다.
 - 자바 코드에서 반환 객체가 하나이면 Item , Optional<Item> 과 같이 사용하면 되고, 반환 객체가 하나 이상이면 컬렉션을 사용하면 된다. 
